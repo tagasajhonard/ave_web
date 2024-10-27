@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="image/webicon.png">
+    <title>LOGIN</title>
+    <script>
+        // Check if a user is already logged in (sessionStorage contains currentUser)
+        const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+
+        if (currentUser) {
+            // If there is a logged-in user, redirect them to the dashboard
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+    
+    <style>
+        @font-face {
+            font-family: 'Poppins-Regular';
+            src: url('font/Poppins-Regular.ttf') format('truetype');
+        }
+        *{
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins-Regular', sans-serif;
+            background-image: url('img/coffebg.jpg'); 
+            background-size: cover; 
+            background-position: center;
+            background-repeat: no-repeat; 
+            height: 100vh; 
+            margin: 0; 
+            text-align: center;
+
+        }
+        button{
+            font-family: 'Poppins-Regular', sans-serif;
+        }
+        #timer, #qr-code {
+            margin: 20px;
+        }
+        #login-button{
+            padding: 6px;
+            margin-top: 20px;
+            width: 100%;
+        }
+        #qr-code {
+            display: none;
+        }
+        
+        #login-status {
+            margin-top: 30px;
+            font-weight: bold;
+        }
+        
+        .container {
+            position: relative; 
+            width: 100vw; 
+            height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            background-color: #f7f7f7; 
+        }
+
+        .form {
+            position: absolute; 
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px; 
+            padding: 20px;
+            background-color: white; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); 
+            border-radius: 8px; 
+        }
+        #password-container{
+            display: none;
+            
+            margin-top: 20px;
+        }
+        #password-container button{
+            padding: 6px;
+            width: 100%;
+            margin-top: 10px;
+
+        }
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 5px;
+            border: 2px solid gray;
+        }
+        .input-wrapper input {
+            font-family: 'Poppins-Regular', sans-serif;
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    border: none;
+    box-sizing: border-box;
+    border-radius: 3px;
+    text-indent: 21px;
+        }
+        .input-wrapper .pass{
+    background-image: url('img/pass.png');
+    background-size: 25px;
+    opacity: 70%;
+    background-position: 10px center;
+    background-repeat: no-repeat;
+}
+.input-wrapper .toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 25px;
+  height: 25px;
+  background-image: url('img/visible.png');
+  background-size: cover;
+  cursor: pointer;
+}
+.input-wrapper label {
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    transition: transform 0.3s ease, color 0.3s ease;
+    pointer-events: none;
+}
+
+.input-wrapper input:focus + label,
+.input-wrapper input:valid + label {
+    transition: .5s;
+    transform: translateY(-145%);
+    color: #000;
+    font-size: 13px;
+}
+.input-wrapper input:focus,
+.input-wrapper input:valid {
+    border: none; 
+    background-color: #cfd7de;
+    outline: none;
+}
+    </style>
+<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-storage.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <div class="form">
+            <h1>Login Page</h1>
+
+            <div id="start">
+                <button id="login-button">Scan you ID's qr</button>
+
+                <div id="qr-code">
+                    <p>Scan the QR code of your ID</p>
+                </div>
+
+                <div id="timer">Time remaining: <span id="time-left">30</span> seconds</div>                
+            </div>
+
+
+            <div id="login-status"></div>
+
+            <div id="password-container">
+                <!-- <input type="password" id="password-input" placeholder="Enter your password" /> -->
+                <div class="input-wrapper">
+                    <input type="password" id="inputField" class="pass" required name="upass" required maxlength="8" />
+                    <label for="inputField" id="placeholder">Password</label>
+                    <span class="toggle-password" ></span>
+                </div>
+                <button id="password-button">Submit</button>
+            </div>
+
+            
+        </div>
+        
+    </div>
+    
+
+    <script type="module">
+        const firebaseConfig = {
+            apiKey: "AIzaSyCMTIQkR66Zz-ENPofBTkuxg-J1oRpaCf4",
+            authDomain: "avenue-t-house.firebaseapp.com",
+            databaseURL: "https://avenue-t-house-default-rtdb.firebaseio.com",
+            projectId: "avenue-t-house",
+            storageBucket: "avenue-t-house.appspot.com",
+            messagingSenderId: "928838424164",
+            appId: "1:928838424164:web:2c289e01a7744d8df57171",
+            measurementId: "G-GMMWS6J7ED"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // DOM elements
+        const loginButton = document.getElementById('login-button');
+        const timerElement = document.getElementById('time-left');
+        const qrCodeElement = document.getElementById('qr-code');
+        const loginStatusElement = document.getElementById('login-status');
+        const passwordContainer = document.getElementById('password-container');
+        const passwordInput = document.getElementById('inputField');
+        const passwordButton = document.getElementById('password-button');
+        const holder = document.getElementById('start');
+
+        let sessionId, timer, countdown;
+
+        loginButton.addEventListener('click', startLoginProcess);
+        loginButton.addEventListener('click', startLoginProcess);
+
+    function startLoginProcess() {
+    sessionId = Math.random().toString(36).substring(2);
+    const loginRef = db.ref('loginSessions/');
+
+    const now = new Date();
+    const timestamp = Date.now();
+    const readableDateTime = now.toLocaleString();
+
+    loginRef.set({
+        timestamp: timestamp, 
+        readableDateTime: readableDateTime,
+        status: 'pending'
+    });
+
+    // Show the QR code
+    qrCodeElement.style.display = 'block';
+
+    // Start the timer
+    startTimer(30); // 60 seconds countdown
+
+
+    // Listen for updates from Firebase (when scanned by the app)
+    loginRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            if (data.status === 'active') {
+                clearInterval(timer); // Stop the timer
+                loginStatusElement.textContent = `Welcome, ${data.name} (${data.position})!`;
+                passwordContainer.style.display = 'block';
+                holder.style.display = 'none';
+            } else if (data.status === 'pending') {
+                // Check if the user has confirmed
+                if (data.adminName) {
+                    loginStatusElement.textContent = `Are you ${data.adminName}?`;
+                    if (confirm(`Are you ${data.adminName}?`)) {
+                        loginStatusElement.textContent = 'Login successful!';
+                        loginRef.update({ status: 'active' }); // Update the status to active
+                        loginRef.remove(); // Remove session after confirmation
+                    } else {
+                        loginStatusElement.textContent = 'Login rejected.';
+                        loginRef.remove(); // Remove session if rejected
+                    }
+                }
+            }
+        }
+    });
+}
+
+
+        function handleScan(data) {
+            const now = new Date();
+            const scannedTime = now.toLocaleString(); // Get current time when scanned
+            const scannedTimestamp = Date.now(); // Get Unix timestamp when scanned
+
+            // Get the session's data from Firebase
+            const loginRef = db.ref('loginSessions/' + sessionId);
+            loginRef.once('value', (snapshot) => {
+                const sessionData = snapshot.val();
+                if (sessionData) {
+                    const sessionCreationTime = sessionData.timestamp;
+
+                    // Check if the scan is within 1 minute (60000 ms)
+                    if (scannedTimestamp - sessionCreationTime <= 30000) {
+                        // Parse scanned data (assuming it contains name and position)
+                        const scannedDetails = JSON.parse(data); // Assuming `data` is a JSON string
+                        const name = scannedDetails.name;
+                        const position = scannedDetails.position;
+
+                        // Update the session with scanned details
+                        loginRef.update({
+                            scannedTime: scannedTime,
+                            name: name,
+                            position: position,
+                            status: 'active'
+                        });
+
+                        loginStatusElement.textContent = 'Scan successful! Session updated.';
+                    } else {
+                        loginStatusElement.textContent = 'Scan failed: Session expired.';
+                    }
+                }
+            });
+        }
+
+
+        passwordButton.addEventListener('click', checkPassword);
+
+//         function checkPassword() {
+//     const enteredPassword = passwordInput.value;
+
+//     // Get the user's name from the login status message
+//     const nameMatch = loginStatusElement.textContent.match(/Welcome, (.+?) \(/);
+//     const name = nameMatch ? nameMatch[1] : null;
+
+//     if (name) {
+//         // Check the password against the Staff node in Firebase
+//         const staffRef = db.ref('Staff');
+//         staffRef.orderByChild('name').equalTo(name).once('value', (snapshot) => {
+//             if (snapshot.exists()) {
+//                 const staffData = snapshot.val();
+//                 const staffKey = Object.keys(staffData)[0]; // Get the first key
+
+//                 if (staffData[staffKey].password === enteredPassword) {
+//                     // Password is correct, show success message
+//                     swal({
+//                         title: "Access Granted!",
+//                         text: "Welcome, " + name + "!",
+//                         icon: "success",
+//                         buttons: {
+//                             confirm: {
+//                                 text: "OK",
+//                                 value: true,
+//                                 visible: true,
+//                                 className: "confirm-button",
+//                                 closeModal: true
+//                             }
+//                         }
+//                     }).then(() => {
+//                         // Redirect to the dashboard after clicking OK
+//                         window.location.href = 'dashboard.html';
+//                     });
+//                 } else {
+//                     // Password is incorrect, show error message
+//                     swal({
+//                         title: "Error!",
+//                         text: "Incorrect password. Please try again.",
+//                         icon: "error",
+//                         button: "OK"
+//                     });
+//                 }
+//             } else {
+//                 loginStatusElement.textContent = 'No staff record found.';
+//             }
+//         });
+//     } else {
+//         loginStatusElement.textContent = 'User name not found.';
+//     }
+// }
+
+        function checkPassword() {
+
+            const loginRef = db.ref('loginSessions/');
+            
+            const now = new Date();
+    const timestamp = Date.now();
+    const readableDateTime = now.toLocaleString();
+
+    const enteredPassword = passwordInput.value;
+
+    // Get the user's name from the login status message
+    const nameMatch = loginStatusElement.textContent.match(/Welcome, (.+?) \(/);
+    const name = nameMatch ? nameMatch[1] : null;
+
+    if (name) {
+        // Check the password against the Staff node in Firebase
+        const staffRef = db.ref('Staff');
+        staffRef.orderByChild('name').equalTo(name).once('value', (snapshot) => {
+            if (snapshot.exists()) {
+                const staffData = snapshot.val();
+                const staffKey = Object.keys(staffData)[0]; // Get the first key
+
+                if (staffData[staffKey].password === enteredPassword) {
+                    // Password is correct, show success message
+                    swal({
+                        title: "Access Granted!",
+                        text: "Welcome, " + name + "!",
+                        icon: "success",
+                        buttons: {
+                            confirm: {
+                                text: "OK",
+                                value: true,
+                                visible: true,
+                                className: "confirm-button",
+                                closeModal: true
+                            }
+                        }
+                    }).then(() => {
+                        
+                        const staffLoginRef = db.ref('StaffLogin').child(staffKey);
+                        const loginData = {
+                            staffName: name,
+                            loginTime: readableDateTime // Save the current time in ISO format
+                        };
+
+                        staffLoginRef.set(loginData) // Save login data
+                            .then(() => {
+                                sessionStorage.setItem('currentUser', JSON.stringify({
+                                    staffName: name,
+                                    loginTime: readableDateTime,
+                                    staffKey: staffKey
+                                }));
+                                loginRef.remove(); 
+                                window.location.href = 'dashboard.html';
+                            })
+                            .catch((error) => {
+                                console.error("Error saving login data: ", error);
+                                // Handle the error (optional)
+                                swal({
+                                    title: "Error!",
+                                    text: "Failed to save login data. Please try again later.",
+                                    icon: "error",
+                                    button: "OK"
+                                });
+                            });
+                    });
+                } else {
+                    // Password is incorrect, show error message
+                    swal({
+                        title: "Error!",
+                        text: "Incorrect password. Please try again.",
+                        icon: "error",
+                        button: "OK"
+                    });
+                }
+            } else {
+                loginStatusElement.textContent = 'No staff record found.';
+            }
+        });
+    } else {
+        loginStatusElement.textContent = 'User name not found.';
+    }
+}
+
+
+
+
+        // Timer function
+        function startTimer(seconds) {
+            countdown = seconds;
+            timer = setInterval(() => {
+                countdown--;
+                timerElement.textContent = countdown;
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    loginStatusElement.textContent = "Login timed out. Please try again.";
+                    qrCodeElement.style.display = 'none'; // Hide QR code
+
+                    const loginRef = db.ref('loginSessions/');
+                    loginRef.remove(); 
+                }
+            }, 1000);
+        }
+    </script>
+
+</body>
+
+<script>
+   document.querySelector(".toggle-password").addEventListener("click", function() {
+    var passwordInput = document.getElementById("inputField");
+    var toggleButton = document.querySelector(".toggle-password");
+
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        toggleButton.style.backgroundImage = "url('img/hide.png')";
+    } else {
+        passwordInput.type = "password";
+        toggleButton.style.backgroundImage = "url('img/visible.png')";
+    }
+});
+
+   
+</script>
+
+</html>

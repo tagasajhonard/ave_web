@@ -1,0 +1,12 @@
+.editProductsOverlay{
+	display: none;
+	background: rgba(0, 0, 0, 0.5);
+}
+#editProducts{
+        width: 70%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        position: absolute;
+        background-color: white;
+    }

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Add product</title>
+	<link rel="stylesheet" type="text/css" href="css/adminClone.css">
+
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-database.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-storage.js"></script>
+</head>
+<style type="text/css">
+	html{
+		background-color: rgba(0, 0, 0, 0.5);
+	}
+	form {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+</style>
+<body>
+<div id="overlay">
+			<form id="products">
+    			<div>
+        			<h2>Add Products</h2>
+    			</div>
+    			<div class="productsHolder">
+    				<div class="txtborder Name">
+    					<p>Product Name*</p>
+        				<input type="text" id="productName" required autofocus>
+    				</div>
+
+    				<div class="txtborder Category">
+    					<p>Product Category*</p>
+        				<select id="categorySelect" required>
+        				</select>
+    				</div>
+
+    				<div class="txtborder">
+            			<p>Product Flavor #1*</p>
+            			<input type="text" id="productFlavor1"  autofocus>
+            			<p id="anotherFlavor1" onclick="showAnotherFlavor1()">*Add Another flavor #2*</p>
+            			<div id="another_flavor1" style="display: none;">
+            			    <p>Flavor #2*</p>
+            			    <input type="text" id="productFlavor2"  autofocus>
+            			    <p id="anotherFlavor2" onclick="showAnotherFlavor2()">*Add Another flavor #3*</p>
+            			    <div id="another_flavor2" style="display: none;">
+            			        <p>Flavor #3*</p>
+            			        <input type="text" id="productFlavor3"  autofocus>
+            			        <p id="anotherFlavor3" onclick="showAnotherFlavor3()">*Add Another flavor #4*</p>
+            			        <div id="another_flavor3" style="display: none;">
+            			            <p>Flavor #4*</p>
+            			            <input type="text" id="productFlavor4"  autofocus>
+            			            <p id="anotherFlavor4" onclick="showAnotherFlavor4()">*Add Another flavor #5*</p>
+            			            <div id="another_flavor4" style="display: none;">
+            			                <p>Flavor #5*</p>
+            			                <input type="text" id="productFlavor5"  autofocus>
+            			            </div>
+            			        </div>
+            			    </div>
+            			</div>
+        			</div>
+
+    				<div class="txtborder Price">
+        				<div class="file_holder">
+        					<p>Upload Product Image*</p>
+        					<input type="file" name="" id="img">
+        				</div>
+        			</div>
+
+
+    				<div class="txtborder">
+    					<p>Product Price*</p>
+    					<div id="holderSize">
+        					<div>
+        						<select id="size1" onchange="updateOptions()">
+        							<option disabled selected>Set Size</option>
+        							<option value="Regular">Regular</option>
+        							<option value="Large">Large</option>
+        							<option value="Small">Small</option>
+        						</select>
+        					</div>
+        					<div>
+        						<input type="number" id="productQuantity1" name="" placeholder="Enter Price" required oninput="limitDigits(this)">
+        					</div>
+        				</div>
+
+        			<p id="another" onclick="showAnother()">*Add Another Size & Price*</p>
+        			<div id="another_popup">
+        				<div id="holderSize">
+        					<div>
+        						<select id="size2" onchange="updateOptionsReverse()">
+        							<option disabled selected>Set Size</option>
+        							<option value="Regular">Regular</option>
+        							<option value="Large">Large</option>
+        							<option value="Small">Small</option>
+        						</select>
+        					</div>
+        					<div>
+        						<input type="number" id="productQuantity2" name="" placeholder="Enter Price" required oninput="limitDigits(this)">
+        					</div>
+        				</div>
+        			</div>
+
+    				</div>
+
+    				<div class="txtborder Price">
+        				<div class="file_holder">
+        					<p>Upload Product Qr Code*</p>
+        					<input type="file" name="" id="QrCodeIMG">
+        				</div>
+        			</div>
+    				
+        			
+    			</div>
+    			<div class="button_holder">
+        			<div>
+        				<button id="cancel" class="cancelBtn" onclick="hideProd()">Cancel</button>
+        			</div>
+        			<div>
+    					<button type="button" id="confirm" onclick="sendProd()">Confirm</button>
+    				</div>
+    			</div>  
+			</form>
+
+
+			</div>
+
+</body>
+<script>
+	  const firebaseConfig = {
+  apiKey: "AIzaSyCMTIQkR66Zz-ENPofBTkuxg-J1oRpaCf4",
+  authDomain: "avenue-t-house.firebaseapp.com",
+  databaseURL: "https://avenue-t-house-default-rtdb.firebaseio.com",
+  projectId: "avenue-t-house",
+  storageBucket: "avenue-t-house.appspot.com",
+  messagingSenderId: "928838424164",
+  appId: "1:928838424164:web:2c289e01a7744d8df57171",
+  measurementId: "G-GMMWS6J7ED"
+};
+
+        firebase.initializeApp(firebaseConfig);
+        
+        const database = firebase.database();
+        const storage = firebase.storage();
+        const categorySelect = document.getElementById('categorySelect');
+
+        function populateCategories() {
+        const categoriesRef = database.ref('category');
+        categoriesRef.on('value', (snapshot) => {
+            categorySelect.innerHTML = '<option disabled selected>Select Category</option>';
+            snapshot.forEach((childSnapshot) => {
+                const category = childSnapshot.val();
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categorySelect.appendChild(option);
+            });
+        });
+    }
+
+
+function sendProd() {
+    const confirmButton = document.getElementById('confirm');
+    const productName = document.getElementById('productName').value;
+    const size1Select = document.getElementById('size1');
+    const size2Select = document.getElementById('size2');
+    const productPrice1 = document.getElementById('productQuantity1').value;
+    const productPrice2 = document.getElementById('productQuantity2').value;
+    let productSize1 = size1Select.value;
+    let productSize2 = size2Select.value;
+    const selectedCategory = document.getElementById('categorySelect').value;
+    const imgFile = document.getElementById('img').files[0];
+    const qrIMG = document.getElementById('QrCodeIMG').files[0];
+
+    const flavors = [];
+    for (let i = 1; i <= 5; i++) {
+        const flavorInput = document.getElementById('productFlavor' + i);
+        if (flavorInput && flavorInput.value.trim() !== '') {
+            flavors.push(flavorInput.value.trim());
+        }
+    }
+
+    document.getElementById('productName').focus();
+
+    if (productName === '') {
+        alert("Please enter a product name.");
+        return;
+    }
+
+    if (selectedCategory === '' || selectedCategory === 'Select Category') {
+        alert("Please select a category.");
+        return;
+    }
+
+    const productsRef = database.ref('Products');
+
+
+    productsRef.orderByChild('ProductName').equalTo(productName).once('value', (snapshot) => {
+        let productExists = false;
+
+        snapshot.forEach((childSnapshot) => {
+            const product = childSnapshot.val();
+            if (product.Category === selectedCategory) {
+                productExists = true;
+            }
+        });
+
+        if (productExists) {
+            alert("This product already exists in the selected category.");
+            confirmButton.classList.remove('loading');
+            confirmButton.innerHTML = 'Confirm';
+            return;
+        }
+
+        // Proceed to add the new product
+        productsRef.once('value', (snapshot) => {
+            const productCount = snapshot.numChildren();
+            const newProductKey = 'Product' + (productCount + 1);
+
+            const storageRef = storage.ref().child('productImages/' + imgFile.name);
+            const storageQr = storage.ref().child('qrImages/' + qrIMG.name);
+
+            storageRef.put(imgFile).then((snapshot) => {
+                console.log('Image uploaded successfully');
+                return snapshot.ref.getDownloadURL();
+            }).then((downloadURL) => {
+        // Then upload the QR image
+        return storageQr.put(qrIMG).then((qrSnapshot) => {
+            console.log('QR image uploaded successfully');
+            return qrSnapshot.ref.getDownloadURL();
+        }).then((qrDownloadURL) => {
+            // Create product data object
+            const productData = {
+                ProductName: productName,
+                Category: selectedCategory,
+                ImageURL: downloadURL,   // Product image URL
+                QRImageURL: qrDownloadURL  // QR image URL
+            };
+
+                if (productSize1 && productSize1 !== 'Set Size') {
+                    productData[productSize1] = productPrice1;
+                }
+
+                // Check if size2 is selected
+                if (productSize2 && productSize2 !== 'Set Size') {
+                    productData[productSize2] = productPrice2;
+                }
+
+                // Add flavors to the product data
+                flavors.forEach((flavor, index) => {
+                    productData['Flavor' + (index + 1)] = flavor;
+                });
+
+                // Set product data to Firebase
+                return productsRef.child(newProductKey).set(productData);
+                });
+            }).then(() => {
+                // Product data has been successfully sent to Firebase
+                console.log("Product data sent successfully");
+                alert("Product data sent successfully!");
+
+                // Clear input fields and select options
+                document.getElementById('productName').value = '';
+                size1Select.selectedIndex = 0;
+                size2Select.selectedIndex = 0;
+                document.getElementById('productQuantity1').value = '';
+                document.getElementById('productQuantity2').value = '';
+                document.getElementById('categorySelect').selectedIndex = 0;
+                document.getElementById('img').value = null;
+
+                for (let i = 1; i <= 5; i++) {
+                    const flavorInput = document.getElementById('productFlavor' + i);
+                    if (flavorInput) {
+                        flavorInput.value = '';
+                    }
+                    if (i > 1) {
+                        document.getElementById('another_flavor' + (i - 1)).style.display = 'none';
+                    }
+                }
+
+                document.getElementById('productName').focus();
+
+                // hideForm(); // Uncomment if you want to hide the form after submission
+            }).catch((error) => {
+                // Handle errors
+                console.error("Error sending product data: ", error);
+                alert("Error sending product data: " + error.message);
+            }).finally(() => {
+                confirmButton.classList.remove('loading');
+                confirmButton.innerHTML = 'Confirm';
+            });
+        });
+    });
+}
+
+    populateCategories();
+</script>
+<script type="text/javascript">
+	function updateOptions() { 
+    var selectedSize = document.getElementById('size1').value;
+    var size2Options = document.getElementById('size2').options;
+
+    for (var i = 0; i < size2Options.length; i++) {
+        if (size2Options[i].value === selectedSize) {
+            size2Options[i].disabled = true;
+        } else {
+            size2Options[i].disabled = false;
+        }
+    }
+    
+    var size1SelectedIndex = document.getElementById('size1').selectedIndex;
+    if (size1SelectedIndex !== 0) {
+        document.getElementById('size2').getElementsByTagName('option')[0].disabled = true;
+    } else {
+        document.getElementById('size2').getElementsByTagName('option')[0].disabled = false;
+    }
+}
+
+function updateOptionsReverse() { 
+    var selectedSize = document.getElementById('size2').value;
+    var size1Options = document.getElementById('size1').options;
+
+    for (var i = 0; i < size1Options.length; i++) {
+        if (size1Options[i].value === selectedSize) {
+            size1Options[i].disabled = true;
+        } else {
+            size1Options[i].disabled = false;
+        }
+    }
+    
+    var size2SelectedIndex = document.getElementById('size2').selectedIndex;
+    if (size2SelectedIndex !== 0) {
+        document.getElementById('size1').getElementsByTagName('option')[0].disabled = true;
+    } else {
+        document.getElementById('size1').getElementsByTagName('option')[0].disabled = false;
+    }
+}
+   function showAnother() {
+    var form = document.getElementById('another_popup');
+    var btn = document.getElementById('another');
+    var size2 = document.getElementById('size2');
+    var productQuantity2 = document.getElementById('productQuantity2');
+
+    if (form.style.display === 'none' || form.style.display === '') {
+        form.style.display = 'block';
+        btn.innerText = "*Remove Added Field*";
+    } else {
+        // Reset the select and input fields
+        size2.selectedIndex = 0;  // Reset to default option (Set Size)
+        productQuantity2.value = '';  // Clear the input field
+
+        // Hide the form
+        form.style.display = 'none';
+        btn.innerText = "*Add Another Size & Price*";
+    }
+}
+
+
+function showAnotherFlavor1() {
+    var form = document.getElementById('another_flavor1');
+    var btn = document.getElementById('anotherFlavor1');
+
+    if (form.style.display === 'none' || form.style.display === '') {
+        form.style.display = 'block';
+        btn.innerText = "*Remove Added Field*";
+    } else {
+        form.style.display = 'none';
+        btn.innerText = "*Add Another Flavor*"; 
+    }
+}
+
+function showAnotherFlavor2() {
+    var form = document.getElementById('another_flavor2');
+    var btn = document.getElementById('anotherFlavor2');
+
+    if (form.style.display === 'none' || form.style.display === '') {
+        form.style.display = 'block';
+        btn.innerText = "*Remove Added Field*";
+    } else {
+        form.style.display = 'none';
+        btn.innerText = "*Add Another Flavor #2*"; 
+    }
+}
+
+function showAnotherFlavor3() {
+    var form = document.getElementById('another_flavor3');
+    var btn = document.getElementById('anotherFlavor3');
+
+    if (form.style.display === 'none' || form.style.display === '') {
+        form.style.display = 'block';
+        btn.innerText = "*Remove Added Field*";
+    } else {
+        form.style.display = 'none';
+        btn.innerText = "*Add Another Flavor #3*"; 
+    }
+}
+function showAnotherFlavor4() {
+    var form = document.getElementById('another_flavor4');
+    var btn = document.getElementById('anotherFlavor4');
+
+    if (form.style.display === 'none' || form.style.display === '') {
+        form.style.display = 'block';
+        btn.innerText = "*Remove Added Field*";
+    } else {
+        form.style.display = 'none';
+        btn.innerText = "*Add Another Flavor #4*"; 
+    }
+}
+
+function showAnotherFlavor5() {
+    var form = document.getElementById('another_flavor5');
+    var btn = document.getElementById('anotherFlavor5');
+
+    if (form.style.display === 'none' || form.style.display === '') {
+        form.style.display = 'block';
+        btn.innerText = "*Remove Added Field*";
+    } else {
+        form.style.display = 'none';
+        btn.innerText = "*Add Another Flavor #5*"; 
+    }
+}
+
+function limitDigits(input) {
+    if (input.value.length > 4) {
+        input.value = input.value.slice(0, 4);
+    }
+}
+
+</script>
+</html>
