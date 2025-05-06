@@ -1,3 +1,6 @@
+
+
+
  function fetchOrders() {
             const ordersRef = firebase.database().ref('Orders');
             ordersRef.on('value', (snapshot) => {
@@ -88,10 +91,6 @@ function displayOrders(orders) {
             quantityCell.innerHTML = quantities; // Display all quantities
             row.appendChild(quantityCell);
 
-            // const addonsCell = document.createElement('td');
-            // addonsCell.innerHTML = addonsInfo; // Display all add-ons
-            // row.appendChild(addonsCell);
-
             const paymentCell = document.createElement('td');
             paymentCell.textContent = paymentMethods;
             row.appendChild(paymentCell);
@@ -101,19 +100,32 @@ function displayOrders(orders) {
             const actionButtonsDiv = document.createElement('div');
             actionButtonsDiv.classList.add('action-buttons');
 
-            const approveImage = document.createElement('img');
+            const approveImage = document.createElement('button');
+            approveImage.textContent = 'Approve';
+            approveImage.classList.add('action-buttons');
+
             approveImage.src = 'image/accept.png'; // Path to your approve image
             approveImage.alt = 'Approve';
-approveImage.onclick = function() {
-    let orderSummary = '<table style="width:100%; text-align:center;">' +
-                       '<tr><th>Order ID</th><th>Customer</th><th>Product</th><th>Quantity</th><th>Size</th><th>Price</th><th>Add-ons</th></tr>';
+          
+            
+            approveImage.onclick = function() {
+            let orderSummary = '<table style="width:100%; text-align:center;">' +
+                       '<tr><th>Order ID</th><th>Customer</th><th>Product</th><th>Quantity</th><th>Size</th><th>Price</th><th>Ref #</th><th>Delivery Method</th><th>Add-ons</th><th>Address</th></tr>';
 
     for (const orderId in customerOrders) {
         const order = customerOrders[orderId];
+
+        if (order.status !== 'pending') {
+            continue;
+        }
+
         const fullName = order.fullName;
+        const refNum = order.refNumber;
         const total = order.total;
         const orderDate = order.orderTime;
 		const address = order.address;
+        const deliveryMethod = order.deliveryMethod;
+
 
         order.items.forEach(item => {
             let addonsDetails = '';
@@ -136,14 +148,14 @@ approveImage.onclick = function() {
                                 <td>${item.quantity}</td>
                                 <td>${item.size}</td>
                                 <td>${item.productPrice}</td>
+                                <td>${refNum}</td>
+                                <td>${deliveryMethod}</td>
                                 <td>${addonsDetails}</td>
+                                <td>${address.length > 20 ? address.substring(0, 20) + '...' : address}</td>
                              </tr>`;
+
         });
 
-        orderSummary += `<tr>
-                            <td style="text-align:left;"><strong>Address:</strong> </td>
-                            <td style='text-align:left;'>${address}</td>
-                         </tr>`;
 		orderSummary += `<tr>
                             <td style="text-align:left; "><strong>Order Date:</strong></td>
                             <td style='text-align:left;'>${orderDate}</td>
@@ -202,31 +214,58 @@ approveImage.onclick = function() {
     });
 };
 
+ 
+
+
             actionButtonsDiv.appendChild(approveImage);
 
-            const rejectImage = document.createElement('img');
-            rejectImage.src = 'image/delete.png'; // Path to your reject image
-            rejectImage.alt = 'Reject';
+            const rejectImage = document.createElement('button');
+            rejectImage.textContent = 'Reject';
+            rejectImage.classList.add('rej');
+
+            const mess = document.createElement('button');
+            mess.textContent = 'Message';
+            mess.classList.add('mess');
+
+            mess.addEventListener('click', () => {
+                const customerName = encodeURIComponent(customer);
+
+                // Display a confirmation dialog using SweetAlert
+                Swal.fire({
+                    title: 'Open Conversation',
+                    text: `Do you want to start a conversation with ${customer}?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // If user confirms, redirect to the message page with the customer parameter in the URL
+                        window.location.href = `chatTesting.html?customer=${customerName}`;
+                        console.log("Redirecting to chat with customer:", customer);
+                 } else {
+                        console.log("User canceled the conversation start.");
+                    }
+                });
+            });
+
+
             rejectImage.onclick = function() {
                 // Handle reject action here
                 console.log('Rejected', customer);
             };
+
+            actionButtonsDiv.appendChild(mess);
             actionButtonsDiv.appendChild(rejectImage);
 
             actionCell.appendChild(actionButtonsDiv);
             row.appendChild(actionCell);
 
-            ordersTableBody.appendChild(row); // Only append the row if it contains pending orders
+            ordersTableBody.appendChild(row);
         }
     }
 } 
     
-
-
-
-
-
-
 
 
 
@@ -332,6 +371,11 @@ approveImage.onclick = function() {
 
     for (const orderId in customerOrders) {
         const order = customerOrders[orderId];
+
+        if (order.status !== 'accepted') {
+            continue;
+        }
+
         const fullName = order.fullName;
         const total = order.total;
         const orderDate = order.orderTime;
@@ -425,34 +469,15 @@ approveImage.onclick = function() {
 
             actionButtonsDiv.appendChild(approveImage);
 
-            const rejectImage = document.createElement('img');
-            rejectImage.src = 'image/delete.png'; // Path to your reject image
-            rejectImage.alt = 'Reject';
-            rejectImage.onclick = function() {
-                // Handle reject action here
-                console.log('Rejected', customer);
-            };
-            actionButtonsDiv.appendChild(rejectImage);
+
 
             actionCell.appendChild(actionButtonsDiv);
             row.appendChild(actionCell);
 
-            ordersTableBody.appendChild(row); // Only append the row if it contains pending orders
+            ordersTableBody.prepend(row); // Only append the row if it contains pending orders
         }
     }
 } 
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -561,6 +586,11 @@ approveImage.onclick = function() {
 
     for (const orderId in customerOrders) {
         const order = customerOrders[orderId];
+
+        if (order.status !== 'in transit') {
+            continue;
+        }
+
         const fullName = order.fullName;
         const total = order.total;
         const orderDate = order.orderTime;
@@ -609,7 +639,7 @@ approveImage.onclick = function() {
 
     // Show confirmation dialog with add-ons
     Swal.fire({
-        title: 'Do you want to ship this order?',
+        title: 'Confirm to receive this order?',
         html: orderSummary,
         showDenyButton: true,
         showCancelButton: true,
@@ -653,19 +683,10 @@ approveImage.onclick = function() {
 
             actionButtonsDiv.appendChild(approveImage);
 
-            const rejectImage = document.createElement('img');
-            rejectImage.src = 'image/delete.png'; // Path to your reject image
-            rejectImage.alt = 'Reject';
-            rejectImage.onclick = function() {
-                // Handle reject action here
-                console.log('Rejected', customer);
-            };
-            actionButtonsDiv.appendChild(rejectImage);
-
             actionCell.appendChild(actionButtonsDiv);
             row.appendChild(actionCell);
 
-            ordersTableBody.appendChild(row); // Only append the row if it contains pending orders
+            ordersTableBody.prepend(row); // Only append the row if it contains pending orders
         }
     }
 } 
@@ -776,6 +797,12 @@ approveImage.onclick = function() {
 
     for (const orderId in customerOrders) {
         const order = customerOrders[orderId];
+
+        if (order.status !== 'delivered') {
+            continue;
+        }
+        
+
         const fullName = order.fullName;
         const total = order.total;
         const orderDate = order.orderTime;
@@ -849,7 +876,7 @@ approveImage.onclick = function() {
             actionCell.appendChild(actionButtonsDiv);
             row.appendChild(actionCell);
 
-            ordersTableBody.appendChild(row); // Only append the row if it contains pending orders
+            ordersTableBody.prepend(row); // Only append the row if it contains pending orders
         }
     }
 } 

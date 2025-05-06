@@ -8,6 +8,10 @@
 <link rel="icon" type="image/x-icon" href="image/webicon.png">
 <title>Messenger Clone</title>
 <style>
+        @font-face {
+        font-family: 'Poppins-Regular';
+        src: url('font/Poppins-Regular.ttf') format('truetype');
+        }
     body {
         font-family: Arial, sans-serif;
         margin: 0;
@@ -23,14 +27,15 @@
         background-color: white;
         padding: 10px;
         display: flex;
-        width: 80%;
-        height: 80vh;
+        width: 90%;
+        height: 90vh;
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
     }
     * {
+        font-family: Poppins-Regular;
         box-sizing: border-box;
     }
 
@@ -51,6 +56,7 @@
         display: flex;
         flex-direction: column;
     }
+   
 
     .user {
         width: 100%;
@@ -72,17 +78,54 @@
         box-shadow: 2px 2px 12px lightgray;
     }
 
-    .chat-messages {
+  /*  .chat-messages {
         flex: 1;
+        text-align: center;
         overflow-y: auto;
         padding: 40px;
-        margin-top: 40px;
-        margin-bottom: 40px;
-    }
+        
+    }*/
 
-    .message {
-        margin-bottom: 10px;
-    }
+  .chat-messages {
+    display: flex;    
+    flex: 1;
+    flex-direction: column; 
+    align-items: flex-start;
+    margin: 10px 0;      
+}
+.message {
+  display: inline-block;
+  max-width: 50%;
+  min-width: 20%;
+  margin: 8px 0;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #f1f1f1;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+
+.message.admin {
+    text-align: right;   
+    background-color: #007bff;
+    color: #fff;           
+    margin-right: 20px;
+    align-self: flex-end; 
+}
+
+.message.user {
+    text-align: left;   
+    background-color: #f0f0f0; 
+    align-self: flex-start;  
+    margin-left: 20px;
+}
+/*.message {
+    border-radius: 10px;
+    padding: 5px 10px;
+    width: 50%;
+    margin: 5px 0;          
+}
 
     .message.admin {
         text-align: right;
@@ -90,7 +133,9 @@
         color: #fff;
         border-radius: 10px;
         padding: 5px 10px;
-        margin-right: 10px;
+        width: 50%;
+        align-self: flex-end; 
+        margin-right: 20px;
     }
 
     .message.user {
@@ -98,8 +143,10 @@
         background-color: #f0f0f0;
         border-radius: 10px;
         padding: 5px 10px;
-        margin-left: 10px;
-    }
+        width: 50%;
+        margin-left: 20px;
+        align-self: flex-start; 
+    }*/
 
     .chat-input {
         z-index: 2;
@@ -117,6 +164,7 @@
         border: none;
         border-radius: 5px;
         margin-right: 10px;
+        outline: none;
     }
 
     .chat-input button {
@@ -129,10 +177,14 @@
         box-sizing: border-box;
         width: auto;
     }
+    #fullName{
+        margin-left: 20px;
+    }
     .userHolder{
+        display: flex;
+        align-items: center;
         width: 100%;
         padding: 10px;
-        height: 60px;
         box-shadow: 2px 2px 5px gray;
     }
     #searchInput{
@@ -153,12 +205,37 @@
        margin: 0 auto;
       height: 50px;
     }
+    #userImage{
+        margin-left: 15px;
+        height: 60px;
+        width: 60px;
+        object-fit: cover;
+        object-position: center; 
+        border-radius: 50px;
+    }
+    .visible{
+        visibility: visible;
+    }
+    .gone{
+        visibility: hidden;
+    }
+    .greet{
+        text-align: center;
+        color: gray;
+        font-size: 25px;
+    }
+    .plane{
+        max-width: 40%;
+        height: auto;
+        margin: 0 auto;
+    }
 </style>
 </head>
 <body>
 
 <div class="holder">
     <div class="container">
+
         <div class="users-container">
             <input type="text" id="searchInput" placeholder="Search users..." >
             <div id="loadingAnimation"></div>
@@ -168,21 +245,24 @@
             </div>
         </div>
     
-    <div class="chat-container">
-        <div class="userHolder">
-            
-        </div>
-        <div class="chat-messages" id="messages">
-            <!-- chat will display here -->
-        </div>
-        <div class="chat-input">
-            <input type="text" id="messageInput" placeholder="Type a message">
-            <button id="sendButton">Send</button>
+        <div class="chat-container">
+            <div class="userHolder" id="headers">
+                <img name="" id="userImage">
+                <p id="fullName"></p>
+            </div>
+            <div class="chat-messages" id="messages">
+                <!-- chat will display here -->
+                <p class="greet">It looks like you don’t have any conversations with users. Start a chat to connect!</p>
+                <img src="image/plane.png" class="plane">
+            </div>
+            <div class="chat-input" id="sendMess">
+                <input type="text" id="messageInput" placeholder="Type a message">
+                <button id="sendButton">Send</button>
+            </div>
         </div>
 
+        <div id="currentUserNode" style="display: none;"></div>
     </div>
-    <div id="currentUserNode" style="display: none;"></div>
-</div>
 </div>
 
 
@@ -206,11 +286,21 @@
     const messagesRef = database.ref('messages');
     const usersRef = database.ref('Users');
 
+    const users = [];
+
+
 
 function displayUsersFromFirebase() {
+
     const usersContainer = document.getElementById('usersContainer');
     const searchInput = document.getElementById('searchInput');
     const loadingDiv = document.getElementById('loadingAnimation');
+
+    const chatContainer = document.getElementById('sendMess');
+    const head = document.getElementById('headers');
+
+    chatContainer.classList.add('gone'); 
+    head.classList.add('gone'); 
 
     function showLoading() {
       loadingDiv.style.display = 'block'; // Show the loading animation
@@ -226,25 +316,74 @@ function displayUsersFromFirebase() {
     usersContainer.innerHTML = '';
     showLoading();
 
-    usersRef.once('value', (snapshot) => {
-        const users = []; // Store user data
+    usersRef.once('value', async (snapshot) => {
+    const users = [];
+    const promises = [];
 
-        snapshot.forEach((childSnapshot) => {
-            const userKey = childSnapshot.key; // This is the username
-            const userData = childSnapshot.val(); // Get the user's data
-            const fullName = userData.fullName; // Get the full name from the user's data
+    snapshot.forEach((childSnapshot) => {
+        const userKey = childSnapshot.key;
+        const userData = childSnapshot.val();
+        const fullName = userData.fullName;
 
-            users.push({ userKey, fullName }); // Push user data to array
+        // Prepare to get the latest message timestamp
+        const messagePromise = messagesRef.child(fullName).orderByChild("timestamp").limitToLast(1).once('value')
+            .then(msgSnap => {
+                let latestTimestamp = 0;
+                let latestMessage = '';
+
+                msgSnap.forEach(message => {
+                    const msgData = message.val();
+                    console.log(msgData);
+                    if (msgData.timestamp) {
+                        latestTimestamp = msgData.timestamp;
+                        latestMessage = msgData.text || 'No content available'; 
+                    }
+                });
+
+                users.push({ userKey, fullName, latestTimestamp, latestMessage });
+            });
+
+        promises.push(messagePromise);
+    });
+
+    await Promise.all(promises);
+    users.sort((a, b) => b.latestTimestamp - a.latestTimestamp);
+
+    hideLoading();
+
+     users.forEach(user => {
+        addUserToDisplay(user.userKey, user.fullName, user.latestMessage);
+    });
+
+    // Initially render users
+    renderUsers(users);
+
+    // Set up listener for new messages
+    users.forEach(user => {
+        messagesRef.child(user.fullName).on('child_added', (msgSnap) => {
+            const msgData = msgSnap.val();
+            if (!msgData || !msgData.timestamp) return;
+
+            const latestTimestamp = msgData.timestamp;
+            const latestMessage = msgData.text || '';
+
+            const userIndex = users.findIndex(u => u.fullName === user.fullName);
+
+            if (userIndex !== -1) {
+                users[userIndex].latestTimestamp = latestTimestamp;
+                users[userIndex].latestMessage = latestMessage;
+
+                // Sort and update the display
+                users.sort((a, b) => b.latestTimestamp - a.latestTimestamp);
+
+                // Re-render users after the update
+                renderUsers(users);
+            }
         });
-        hideLoading();
-        // Display all users initially
-        users.forEach(user => {
-            addUserToDisplay(user.userKey, user.fullName);
-        });
-
-        // Search functionality
-        searchInput.addEventListener('input', () => {
+    });
+    searchInput.addEventListener('input', () => {
             const searchTerm = searchInput.value.toLowerCase();
+            console.log("Search input changed. Filtering users for term:", searchTerm);
 
             // Clear users container
             usersContainer.innerHTML = '';
@@ -252,64 +391,149 @@ function displayUsersFromFirebase() {
             // Filter and display users based on search term
             users.forEach(user => {
                 if (user.fullName.toLowerCase().includes(searchTerm)) {
-                    addUserToDisplay(user.userKey, user.fullName);
+                    addUserToDisplay(user.userKey, user.fullName, user.latestMessage);
+                    console.log(`User matches search term: ${user.fullName}`);
                 }
             });
 
-            // Reapply the active class if the active user is visible
             if (activeUserKey) {
                 const activeUserDiv = document.querySelector(`[data-user-key="${activeUserKey}"]`);
                 if (activeUserDiv) {
                     activeUserDiv.classList.add('active');
+                    console.log(`Reapplying active class to user: ${activeUserKey}`);
+                } else {
+                    console.warn("Active user div not found during search filter.");
                 }
             }
             hideLoading();
         });
+});
 
+function renderUsers(users) {
+    usersContainer.innerHTML = '';
+    users.forEach(user => {
+        addUserToDisplay(user.userKey, user.fullName);
     });
-
-    // Helper function to add user to the display
-    function addUserToDisplay(userKey, fullName) {
-        const userDiv = document.createElement('div');
-        userDiv.classList.add('user');
-        userDiv.textContent = fullName; // Display the full name
-        userDiv.dataset.userKey = userKey; // Store userKey in a data attribute for easy access
-
-        // Use userKey for message display
-        userDiv.addEventListener('click', () => {
-            document.getElementById('messages').innerHTML = '';
-            displayMessagesForUser(fullName); // Use username (key) for message display
-            document.querySelectorAll('.user').forEach(userDiv => userDiv.classList.remove('active'));
-            userDiv.classList.add('active');
-            document.getElementById('currentUserNode').textContent = fullName; // Display full name in the current user node
-            activeUserKey = userKey; // Update the active user
-        });
-
-        usersContainer.appendChild(userDiv);
-    }
 }
 
 
+
+// function addUserToDisplay(userKey, fullName) {
+
+//     const userDiv = document.createElement('div');
+//     userDiv.classList.add('user');
+//     userDiv.textContent = fullName; // Display the full name
+//     userDiv.dataset.userKey = userKey; // Store userKey in a data attribute for easy access
+
+
+//     // Use fullName for message display and updating the full name field
+//     userDiv.addEventListener('click', () => {
+//         document.getElementById('messages').innerHTML = '';
+//         displayMessagesForUser(fullName);
+//         document.querySelectorAll('.user').forEach(userDiv => userDiv.classList.remove('active'));
+//         userDiv.classList.add('active');
+//         document.getElementById('currentUserNode').textContent = fullName;
+//         document.getElementById('fullName').textContent = fullName;
+
+//         chatContainer.classList.remove('gone');
+//         head.classList.remove('gone');  
+        
+//         // Get the user's profile image URL and display it
+//         usersRef.child(userKey).once('value').then((snapshot) => {
+//             const userData = snapshot.val();
+//             const profileImageUrl = userData.profileImageUrl; // Assuming this is the path to the image URL
+
+//             if (profileImageUrl) {
+//                 document.getElementById('userImage').src = profileImageUrl; // Set the image source to the URL
+//             } else {
+//                 document.getElementById('userImage').src = 'image/placeholder.png'; // Clear the image if no URL is found
+//             }
+//         }).catch((error) => {
+//             console.error("Error fetching user data:", error);
+//         });
+
+//         activeUserKey = userKey; // Update the active user key
+//     });
+
+//     usersContainer.appendChild(userDiv);
+// }
+
+
+function addUserToDisplay(userKey, fullName, latestMessage = '') {
+    const userDiv = document.createElement('div');
+    userDiv.classList.add('user');
+    userDiv.textContent = fullName; // Display the full name
+    userDiv.dataset.userKey = userKey; // Store userKey in a data attribute for easy access
+
+    // Create a new element to display the latest message below the user's name
+    const messageDiv = document.createElement('p');
+    messageDiv.classList.add('latest-message');
+    messageDiv.textContent = latestMessage ? `Latest message: ${latestMessage}` : 'No messages yet';
+    userDiv.appendChild(messageDiv); // Add the message element under the user's name
+
+    // Use fullName for message display and updating the full name field
+    userDiv.addEventListener('click', () => {
+        document.getElementById('messages').innerHTML = '';
+        displayMessagesForUser(fullName);
+        document.querySelectorAll('.user').forEach(userDiv => userDiv.classList.remove('active'));
+        userDiv.classList.add('active');
+        document.getElementById('currentUserNode').textContent = fullName;
+        document.getElementById('fullName').textContent = fullName;
+
+        chatContainer.classList.remove('gone');
+        head.classList.remove('gone');
+
+        // Get the user's profile image URL and display it
+        usersRef.child(userKey).once('value').then((snapshot) => {
+            const userData = snapshot.val();
+            const profileImageUrl = userData.profileImageUrl; // Assuming this is the path to the image URL
+
+            if (profileImageUrl) {
+                document.getElementById('userImage').src = profileImageUrl; // Set the image source to the URL
+            } else {
+                document.getElementById('userImage').src = 'image/placeholder.png'; // Clear the image if no URL is found
+            }
+        }).catch((error) => {
+            console.error("Error fetching user data:", error);
+        });
+
+        activeUserKey = userKey; // Update the active user key
+    });
+
+    usersContainer.appendChild(userDiv);
+}
+
+
+}
 
 
 function displayMessagesForUser(fullName) {
     const messagesDiv = document.getElementById('messages');
     messagesDiv.innerHTML = '';
 
-    // Turn off previous listeners to avoid duplicate messages
     messagesRef.child(fullName).off();
 
-    // Retrieve messages for the specific user
-    messagesRef.child(fullName).once('value').then((snapshot) => {
-        if (!snapshot.exists()) {
-            // No messages exist, display welcome message
-            const welcomeMessage = "You don't have any conversations with this user. Start chatting now!";
-            displayMessage(welcomeMessage, "Admin"); // Display welcome message as if sent by Admin
-            console.log("No existing messages. Displaying welcome message. ", fullName);
-        } else {
-            console.log("Messages exist for user:", fullName);
+    messagesRef.child(fullName).on('child_added', (messageSnapshot) => {
+    const messageId = messageSnapshot.key;
+    const messageData = messageSnapshot.val();
+
+    if (messageData) {
+        const sender = messageData.sender;
+        let text = messageData.text;
+        let imageUrl = null;
+
+        // If the text looks like a Firebase Storage image URL, treat it as an image
+        if (text && text.startsWith("https://firebasestorage.googleapis.com")) {
+            imageUrl = text;
+            text = ''; // Clear text so it doesn’t show the URL
         }
-    }).catch(error => {
+
+        displayMessage(text, sender, imageUrl);
+        console.log("Displaying message:", { text, sender, imageUrl });
+    } else {
+        console.warn("No data found for message ID:", messageId);
+    }
+}).catch(error => {
         console.error("Error fetching messages:", error);
     });
 
@@ -322,9 +546,9 @@ function displayMessagesForUser(fullName) {
             const sender = messageData.sender;
             const text = messageData.text;
             const timestamp = messageData.timestamp;
+            const imageUrl = messageData.imageUrl || null;
 
-            // Display each message
-            displayMessage(text, sender);
+            displayMessage(text, sender, imageUrl);
             console.log("Displaying message:", { text, sender, timestamp });
         } else {
             console.warn("No data found for message ID:", messageId);
@@ -332,18 +556,43 @@ function displayMessagesForUser(fullName) {
     });
 }
 
+// function displayMessage(text, sender) {
+//     const messagesDiv = document.getElementById('messages');
+//     const messageDiv = document.createElement('div');
+//     messageDiv.classList.add('message');
+//     messageDiv.classList.add(sender === 'Admin' ? 'admin' : 'user');
+//     messageDiv.textContent = text;
+//     messagesDiv.appendChild(messageDiv);
+//     messagesDiv.scrollTop = messagesDiv.scrollHeight;
+// }
 
 
-function displayMessage(text, sender) {
+function displayMessage(text, sender, imageUrl = null) {
     const messagesDiv = document.getElementById('messages');
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message');
     messageDiv.classList.add(sender === 'Admin' ? 'admin' : 'user');
-    messageDiv.textContent = text;
+
+    // Display image if available
+    if (imageUrl) {
+        const imageEl = document.createElement('img');
+        imageEl.src = imageUrl;
+        imageEl.alt = "Sent image";
+        imageEl.style.maxWidth = "220px";
+        imageEl.style.display = "block";
+        messageDiv.appendChild(imageEl);
+    }
+
+    // Display text if available
+    if (text) {
+        const textEl = document.createElement('span');
+        textEl.textContent = text;
+        messageDiv.appendChild(textEl);
+    }
+
     messagesDiv.appendChild(messageDiv);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
-
 
 
 

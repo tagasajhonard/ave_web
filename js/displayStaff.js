@@ -5,7 +5,7 @@ function displayStaff() {
     // Get staff data from Firebase Realtime Database
     const staffRef = database.ref('Staff');
 
-    staffRef.once('value', (snapshot) => {
+    staffRef.on('value', (snapshot) => {
         snapshot.forEach((childSnapshot) => {
             const staffData = childSnapshot.val();
             const staffName = staffData.name;
@@ -14,12 +14,11 @@ function displayStaff() {
 
             // Create staff element
             const staffDiv = document.createElement('div');
-            staffDiv.classList.add('staff');
 
             // Create image element if URL exists
             const imageElement = staffImageURL ? 
                 `<img src="${staffImageURL}" alt="${staffName}'s Image" class="staff-image">` : 
-                `<img src="image/default.png" alt="Default Image" class="staff-image">`;
+                `<img src="image/placeholder.png" alt="Default Image" class="staff-image">`;
 
             staffDiv.innerHTML = `
                 <div class="staff-info">
@@ -41,16 +40,51 @@ function displayStaff() {
     });
 }
 
-
 function sendStaff() {
     // Retrieve form values
-    const staffName = document.getElementById('staffName').value;
+    const staffName = document.getElementById('staffName').value.trim();
     const gender = document.querySelector('select').value;
-    const staffNumber = document.getElementById('staffNumber').value;
-    const staffGmail = document.getElementById('staffGmail').value;
-    const staffAddress = document.getElementById('staffAddress').value;
-    const staffPosition = document.getElementById('staffPosition').value;
+    const staffUsername = document.getElementById('staffUsername').value.trim();
+    const staffNumber = document.getElementById('staffNumber').value.trim();
+    const staffGmail = document.getElementById('staffGmail').value.trim();
+    const staffAddress = document.getElementById('staffAddress').value.trim();
+    const staffPosition = document.getElementById('staffPosition').value.trim();
+    const staffPass = document.getElementById('staffPass').value.trim();
     const staffImage = document.getElementById('staffImage').files[0]; // Get selected file
+
+    // Check if any required fields are empty
+    if (!staffName) {
+        alert('Please input the staff name.');
+        return;
+    }
+    if (!gender) {
+        alert('Please select a gender.');
+        return;
+    }
+    if (!staffNumber) {
+        alert('Please input the phone number.');
+        return;
+    }
+    if (!staffUsername) {
+        alert('Please input the username.');
+        return;
+    }
+    if (!staffGmail) {
+        alert('Please input the Gmail.');
+        return;
+    }
+    if (!staffAddress) {
+        alert('Please input the address.');
+        return;
+    }
+    if (!staffPosition) {
+        alert('Please input the position.');
+        return;
+    }
+    if (!staffPass) {
+        alert('Please input the password.');
+        return;
+    }
 
     // Validate phone number length
     if (staffNumber.length > 11) {
@@ -65,7 +99,9 @@ function sendStaff() {
         phoneNumber: staffNumber,
         gmail: staffGmail,
         address: staffAddress,
-        position: staffPosition
+        position: staffPosition,
+        username: staffUsername,
+        password: staffPass
     };
 
     if (staffImage) {
@@ -87,6 +123,7 @@ function sendStaff() {
                     .then(() => {
                         alert('Staff added successfully!');
                         document.getElementById('staff_form').reset();
+                        displayStaff(); // Refresh staff display
                     })
                     .catch((error) => {
                         console.error('Error adding staff:', error);
@@ -98,12 +135,14 @@ function sendStaff() {
             .then(() => {
                 alert('Staff added successfully!');
                 document.getElementById('staff_form').reset();
+                displayStaff(); // Refresh staff display
             })
             .catch((error) => {
                 console.error('Error adding staff:', error);
             });
     }
 }
+
 
 
 displayStaff();

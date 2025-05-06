@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LOGIN</title>
+    <link rel="icon" type="image/x-icon" href="image/webicon.png">
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-storage.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<script>
+    // Check if user is already logged in
+    const loggedInUser = JSON.parse(sessionStorage.getItem("authenticatedStaff"));
+
+    if (loggedInUser) {
+        // If user data exists in sessionStorage, redirect to dashboard
+        window.location.href = "dashboard.html"; // Replace with your desired page
+    }
+</script>
+
+<style type="text/css">
+    .left img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        /* This centers and crops the image */
+        object-position: center;
+        /* Centers the cropped area */
+    }
+</style>
+
+<body>
+
+    <div class="logo">
+    </div>
+
+    <div class="containers">
+        <div class="image">
+            <img src="img/imgFIN.png" alt="Image" class="images">
+        </div>
+        <div class="txt">
+            <h1>Welcome!</h1>
+            <p class="one">Avenue's Admin</p>
+            <p class="two">We're excited to have you join us to oversee store operations. Explore our tools to enhance
+                customer experience and drive success."</p>
+            <div class="button">
+                <div>
+                    <p>Click login to continue</p>
+                </div>
+                <div>
+                    <button class="open-overlay" id="loginBtn">LOGIN</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="overlay">
+        <div class="loginContainer">
+            <div class="left">
+                <img src="img/loog.jpg" class="loog">
+            </div>
+            <div class="close-button">X</div>
+            <div class="right">
+                <div class="textLogin">
+                    <h2>Welcome Back :)</h2>
+                    <p>To keep connected with us please login with your personal username and password.</p>
+                </div>
+                <form method="post" id="loginForm">
+                    <div class="input-wrapper logMargin">
+                        <input type="text" id="username" class="user" required name="uname" />
+                        <label for="inputField" id="placeholder">Username</label>
+                    </div>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" class="pass" required name="upass" />
+                        <label for="inputField" id="placeholder">Password</label>
+                        <span class="toggle-password"></span>
+                    </div>
+                    <div class="checkbox">
+                        <div>
+                            <input type="checkbox" name="">
+                            <label>Remember Me</label>
+                        </div>
+                        <div>
+                            <label>Forgot Password?</label>
+                        </div>
+                    </div>
+                    <div>
+                        <input type="submit" name="check" id="submit" value="LOGIN">
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <p>&copy; 2024 Syntax InnovateTors. All Rights Reserved.</p>
+    </div>
+</body>
+<script src="js/jquery.js"></script>
+<script src="js/script.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+
+        $(".toggle-password").click(function () {
+            var passwordInput = $("#password");
+            var toggleButton = $(".toggle-password");
+
+            if (passwordInput.attr("type") === "password") {
+                passwordInput.attr("type", "text");
+                toggleButton.css("background-image", "url('img/hide.png')");
+            } else {
+                passwordInput.attr("type", "password");
+                toggleButton.css("background-image", "url('img/visible.png')");
+            }
+        });
+
+        // Open Overlay
+        $('.open-overlay').click(function () {
+            $('.overlay').fadeIn();
+        });
+
+        // Close Overlay
+        $('.close-button').click(function () {
+            $('.overlay').fadeOut();
+        });
+
+        // register script
+
+        $('.open-overlay2').click(function () {
+            $('.overlay2').fadeIn();
+        });
+        $('.close-button2').click(function () {
+            $('.overlay2').fadeOut();
+        });
+    });
+</script>
+<script>
+
+    // Initialize Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyCMTIQkR66Zz-ENPofBTkuxg-J1oRpaCf4",
+        authDomain: "avenue-t-house.firebaseapp.com",
+        databaseURL: "https://avenue-t-house-default-rtdb.firebaseio.com",
+        projectId: "avenue-t-house",
+        storageBucket: "avenue-t-house.appspot.com",
+        messagingSenderId: "928838424164",
+        appId: "1:928838424164:web:2c289e01a7744d8df57171",
+        measurementId: "G-GMMWS6J7ED"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    const database = firebase.database();
+    const storage = firebase.storage();
+
+
+    document.getElementById("loginForm").addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent form submission
+
+        // Get entered username and password
+        const enteredUsername = document.getElementById("username").value;
+        const enteredPassword = document.getElementById("password").value;
+
+        // Reference to the Staff node in Firebase
+        const dbRef = firebase.database().ref("Staff");
+
+        // Flag to check if the user is authenticated
+        let isAuthenticated = false;
+
+        // Query the Staff data
+        dbRef.once("value", snapshot => {
+            snapshot.forEach(childSnapshot => {
+                const staff = childSnapshot.val();
+
+                // Check if username and password match
+                if (staff.username === enteredUsername && staff.password === enteredPassword) {
+                    isAuthenticated = true;
+
+                    sessionStorage.setItem("authenticatedStaff", JSON.stringify(staff));
+
+                    // Show welcome message with SweetAlert
+                    Swal.fire({
+                        icon: 'success',
+                        title: `Welcome, ${staff.name}!`,
+                        text: 'Login successful',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        // Redirect or update the page after successful login, if needed
+                        window.location.href = "dashboard.html"; // Replace with the appropriate page
+                    });
+                    return true; // Exit the loop once a match is found
+                }
+            });
+
+            // If credentials don't match, show error message
+            if (!isAuthenticated) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Login Failed',
+                    text: 'Username or password is incorrect',
+                    confirmButtonText: 'Try Again'
+                });
+            }
+        });
+    });
+
+</script>
+
+</html>

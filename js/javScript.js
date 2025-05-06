@@ -39,8 +39,8 @@ document.getElementById("dateTimeForm").addEventListener("submit", function (e) 
     }
 }
 
-function showAnotherFlavor() {
-    var form = document.getElementById('another_flavor');
+function showAnotherFlavor1() {
+    var form = document.getElementById('another_flavor1');
     var btn = document.getElementById('anotherFlavor');
 
     if (form.style.display === 'none' || form.style.display === '') {
@@ -52,8 +52,8 @@ function showAnotherFlavor() {
     }
 }
 
-function showAnotherFlavor3() {
-    var form = document.getElementById('another_flavor3');
+function showAnotherFlavor2() {
+    var form = document.getElementById('another_flavor2');
     var btn = document.getElementById('anotherFlavor3');
 
     if (form.style.display === 'none' || form.style.display === '') {
@@ -65,8 +65,8 @@ function showAnotherFlavor3() {
     }
 }
 
-function showAnotherFlavor4() {
-    var form = document.getElementById('another_flavor4');
+function showAnotherFlavor3() {
+    var form = document.getElementById('another_flavor3');
     var btn = document.getElementById('anotherFlavor4');
 
     if (form.style.display === 'none' || form.style.display === '') {
@@ -77,8 +77,8 @@ function showAnotherFlavor4() {
         btn.innerText = "*Add Another Flavor #4*"; 
     }
 }
-function showAnotherFlavor5() {
-    var form = document.getElementById('another_flavor5');
+function showAnotherFlavor4() {
+    var form = document.getElementById('another_flavor4');
     var btn = document.getElementById('anotherFlavor5');
 
     if (form.style.display === 'none' || form.style.display === '') {

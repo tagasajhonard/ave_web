@@ -52,11 +52,9 @@
         border-radius: 10px;
         width: 75%;
         box-shadow: 2px 2px 12px lightgray;
-        overflow-y: auto;
         display: flex;
         flex-direction: column;
     }
-   
 
     .user {
         width: 100%;
@@ -88,6 +86,7 @@
 
   .chat-messages {
     display: flex;    
+    overflow-y: auto;
     flex: 1;
     flex-direction: column; 
     align-items: flex-start;
@@ -188,7 +187,7 @@
         width: 100%; 
         padding: 10px; 
         margin-bottom: 20px;
-        border-radius: 50px;
+        border-radius: 10px;
         border: none;
         box-shadow: inset 2px 2px 5px lightgray;
         outline: none;
@@ -298,12 +297,13 @@ function displayUsersFromFirebase() {
 
     function showLoading() {
       loadingDiv.style.display = 'block'; // Show the loading animation
+      console.log("Loading animation shown.");
     }
 
     function hideLoading() {
       loadingDiv.style.display = 'none'; // Hide the loading animation
+      console.log("Loading animation hidden.");
     }
-
 
     let activeUserKey = null; // Track the active user's key
 
@@ -311,6 +311,7 @@ function displayUsersFromFirebase() {
     showLoading();
 
     usersRef.once('value', (snapshot) => {
+        console.log("Fetched users data from Firebase.");
         const users = []; // Store user data
 
         snapshot.forEach((childSnapshot) => {
@@ -319,16 +320,38 @@ function displayUsersFromFirebase() {
             const fullName = userData.fullName; // Get the full name from the user's data
 
             users.push({ userKey, fullName }); // Push user data to array
+            console.log(`User loaded: ${fullName} (Key: ${userKey})`);
         });
         hideLoading();
+        
+        // Get the URL parameter for customer and decode it
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlCustomer = urlParams.get('customer');
+        console.log("URL parameter for customer:", urlCustomer);
+        
         // Display all users initially
         users.forEach(user => {
             addUserToDisplay(user.userKey, user.fullName);
+            
+            // If the URL parameter matches the user's full name, trigger a click to open the conversation
+            if (urlCustomer && urlCustomer === user.fullName) {
+                console.log(`Matching user found for URL customer: ${user.fullName}`);
+                setTimeout(() => {
+                    const userDiv = document.querySelector(`[data-user-key="${user.userKey}"]`);
+                    if (userDiv) {
+                        userDiv.click();
+                        console.log(`Auto-click triggered for user: ${user.fullName}`);
+                    } else {
+                        console.warn("User div not found for auto-click.");
+                    }
+                }, 100); // Add a small delay to ensure the element is fully rendered
+            }
         });
 
         // Search functionality
         searchInput.addEventListener('input', () => {
             const searchTerm = searchInput.value.toLowerCase();
+            console.log("Search input changed. Filtering users for term:", searchTerm);
 
             // Clear users container
             usersContainer.innerHTML = '';
@@ -337,20 +360,26 @@ function displayUsersFromFirebase() {
             users.forEach(user => {
                 if (user.fullName.toLowerCase().includes(searchTerm)) {
                     addUserToDisplay(user.userKey, user.fullName);
+                    console.log(`User matches search term: ${user.fullName}`);
                 }
             });
 
-            // Reapply the active class if the active user is visible
             if (activeUserKey) {
                 const activeUserDiv = document.querySelector(`[data-user-key="${activeUserKey}"]`);
                 if (activeUserDiv) {
                     activeUserDiv.classList.add('active');
+                    console.log(`Reapplying active class to user: ${activeUserKey}`);
+                } else {
+                    console.warn("Active user div not found during search filter.");
                 }
             }
             hideLoading();
         });
-
     });
+
+
+
+
 
 function addUserToDisplay(userKey, fullName) {
 
@@ -394,9 +423,6 @@ function addUserToDisplay(userKey, fullName) {
 
 }
 
-
-
-
 function displayMessagesForUser(fullName) {
     const messagesDiv = document.getElementById('messages');
     messagesDiv.innerHTML = '';
@@ -437,22 +463,41 @@ function displayMessagesForUser(fullName) {
     });
 }
 
-
+// function displayMessage(text, sender) {
+//     const messagesDiv = document.getElementById('messages');
+//     const messageDiv = document.createElement('div');
+//     messageDiv.classList.add('message');
+//     messageDiv.classList.add(sender === 'Admin' ? 'admin' : 'user');
+//     messageDiv.textContent = text;
+//     messagesDiv.appendChild(messageDiv);
+//     messagesDiv.scrollTop = messagesDiv.scrollHeight;
+// }
 
 function displayMessage(text, sender) {
     const messagesDiv = document.getElementById('messages');
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message');
     messageDiv.classList.add(sender === 'Admin' ? 'admin' : 'user');
-    messageDiv.textContent = text;
+
+    // Check if the text is a URL (very basic check for demonstration)
+    const isImageUrl = text.startsWith('https://') && (text.endsWith('.jpg') || text.endsWith('.png') || text.endsWith('.jpeg') || text.includes('?alt=media'));
+
+    if (isImageUrl) {
+        // Create an image element if the message is an image URL
+        const img = document.createElement('img');
+        img.src = text;
+        img.alt = "Message Image";
+        img.style.maxWidth = '100%'; // Adjust as needed for your layout
+        messageDiv.appendChild(img);
+    } else {
+        // Display as regular text if it's not an image URL
+        messageDiv.textContent = text;
+    }
+
     messagesDiv.appendChild(messageDiv);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to the latest message
 }
 
-
-
-
- 
 
 document.getElementById('sendButton').addEventListener('click', () => {
     const messageInput = document.getElementById('messageInput');
@@ -475,7 +520,6 @@ document.getElementById('sendButton').addEventListener('click', () => {
         messageInput.value = '';
     }
 });
-
 
 
 displayUsersFromFirebase();

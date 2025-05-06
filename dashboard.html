@@ -1,91 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-	<link rel="stylesheet" type="text/css" href="css/adminClone.css">
-	<link rel="stylesheet" type="text/css" href="css/formEditing.css">
-	<meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/adminClone.css">
+    <link rel="stylesheet" type="text/css" href="css/formEditing.css">
+    <meta charset="UTF-8">
 
-	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-database.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-storage.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-storage.js"></script>
 
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="icon" type="image/x-icon" href="image/webicon.png">
-	<title>Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="image/webicon.png">
+
+    <script src="js/javScript.js"></script>
+    <script src="js/pendingOrders.js"></script>
+    <script src="js/acceptedOrders.js"></script>
+    <script src="js/shipOrders.js"></script>
+    <script src="js/completedOrders.js"></script>
+    <script src="js/displayStaff.js"></script>
+
+    <title>Dashboard</title>
 </head>
 <style type="text/css">
-	.my-actions {
-  margin: 2em 2em 0;
-}
+    .my-actions {
+        margin: 2em 2em 0;
+    }
 
-.order-1 {
-  order: 1;
-}
+    .order-1 {
+        order: 1;
+    }
 
-.order-2 {
-  order: 2;
-}
+    .order-2 {
+        order: 2;
+    }
 
-.order-3 {
-  order: 3;
-}
+    .order-3 {
+        order: 3;
+    }
 
-.right-gap {
-  margin-right: auto;
-}
-.custom-swal {
-    height: 700px;
-    overflow-y: auto;
-}
+    .right-gap {
+        margin-right: auto;
+    }
 
-	 form {
-            border: 1px solid #ccc;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        * {
+    .custom-swal {
+        height: 700px;
+        overflow-y: auto;
+    }
+
+    form {
+        border: 1px solid #ccc;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
         box-sizing: border-box;
     }
-        label {
-            display: block;
-            margin-bottom: 8px;
-        }
 
-        input {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 16px;
-            box-sizing: border-box;
-        }
+    label {
+        display: block;
+        margin-bottom: 8px;
+    }
 
-        button {
-            background-color: #4caf50;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+    input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 16px;
+        box-sizing: border-box;
+    }
 
-        button:hover {
-            background-color: #45a049;
-        }
-        #overlay {
+    .tableBtnHolder button {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .tableBtnHolder button:hover {
+        background-color: #45a049;
+    }
+
+    #overlay {
         display: none;
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.5); /* Semi-dark background color */
+        background: rgba(0, 0, 0, 0.5);
+        /* Semi-dark background color */
         z-index: 999;
     }
-         #dateTimeForm {
+
+    #dateTimeForm {
         display: none;
         position: fixed;
         top: 50%;
@@ -106,7 +121,8 @@
     label {
         display: block;
         margin-bottom: 8px;
-        margin-top: 8px; /* Add margin to the top */
+        margin-top: 8px;
+        /* Add margin to the top */
     }
 
     input {
@@ -115,623 +131,567 @@
         margin-bottom: 16px;
         box-sizing: border-box;
     }
-    #logoutbtn{
-    	background-color: transparent;
-    	border: none;
+
+    #logoutbtn {
+        background-color: transparent;
+        border: none;
     }
-    #formlog{
-    	border: none;
-    	box-shadow: none;
-    	padding: 0;
-    	margin: 0;
+
+    #formlog {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
     }
-    #formlog input{
-    	font-size: 15px;
+
+    #formlog input {
+        font-size: 15px;
     }
-    .action-buttons{
-    	display: flex;
-    	justify-content: space-evenly;
-    	align-items: center;
-    }
+
     .action-buttons img {
-            width: 25px;
-            height: 25px;
-            cursor: pointer;
-        }
-        .sub_menu {
-            display: none;
-            list-style-type: none;
-            padding-left: 30px;
-            opacity: 0;
-    		transition: opacity 1s ease-in-out;
-        }
-		.sub_menu.show {
-		    display: block;
-		    opacity: 1;
-		}
-        .sub_menu a {
-            text-decoration: none;
-            color: black;
-        }
-        #manage{
-        	display: flex;
-        	grid-gap: 8px;
-        }
-        
-    </style>
+        width: 25px;
+        height: 25px;
+        cursor: pointer;
+    }
+
+    .sub_menu {
+        display: none;
+        list-style-type: none;
+        padding-left: 30px;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+    }
+
+    .sub_menu.show {
+        display: block;
+        opacity: 1;
+    }
+
+    .sub_menu a {
+        text-decoration: none;
+        color: black;
+    }
+
+    #manage {
+        display: flex;
+        grid-gap: 8px;
+    }
+
+    #displayStaff {
+        display: flex;
+        grid-gap: 20px;
+    }
+</style>
+
 <body>
 
-	<div class="nav">
-		
-		<ul>
-			<div class="name">
-				<p>ADMIN</p>
-			</div>
-			<div class="anchor">
+    <div class="nav">
 
-				<a href="adminClone.php"><div class="flex">
-					<div class="li_img">
-						<img src="image/home.png">
-					</div>
-					<div class="li_name">
-						<li>DASHBOARD</li>
-					</div>
-				</div></a>
+        <ul>
+            <div class="name">
+                <p>ADMIN</p>
+            </div>
+            <div class="anchor">
 
-            	<div class="dropdown">
+                <a href="dashboard.html">
+                    <div class="flex">
+                        <div class="li_img">
+                            <img src="image/home.png">
+                        </div>
+                        <div class="li_name">
+                            <li>DASHBOARD</li>
+                        </div>
+                    </div>
+                </a>
+
+                <div class="dropdown">
                     <a href="#" class="management">
                         <div class="flex">
                             <div class="li_img">
                                 <img src="image/candidate.png">
                             </div>
                             <div class="li_name" id="manage">
-                            	<div>
-                            		<li>MANAGEMENT</li>
-                            	</div>
-                                <div class="drop">
-                                	<li>+</li>
+                                <div>
+                                    <li>MANAGEMENT</li>
                                 </div>
-                                
+                                <div class="drop">
+                                    <li>+</li>
+                                </div>
+
                             </div>
                         </div>
                     </a>
                     <ul class="sub_menu">
-                    	<a href="" class="manage"><li>Customers</li></a>
-                        <a href="" class="productManage"><li>Products</li></a>
-                        <a href="" class="staff"><li>Staff</li></a>
+                        <a href="" class="manage">
+                            <li>Customers</li>
+                        </a>
+                        <a href="" class="productManage">
+                            <li>Products</li>
+                        </a>
+                        <a href="" class="staff">
+                            <li>Staff</li>
+                        </a>
                     </ul>
                 </div>
 
-				<div class="dropdown">
+                <div class="dropdown">
                     <a href="#" class="management">
                         <div class="flex">
                             <div class="li_img">
                                 <img src="image/communications.png">
                             </div>
                             <div class="li_name" id="manage">
-                            	<div>
-                            		<li>INTERACT</li>
-                            	</div>
-                                <div class="drop">
-                                	<li>+</li>
+                                <div>
+                                    <li>INTERACT</li>
                                 </div>
-                                
+                                <div class="drop">
+                                    <li>+</li>
+                                </div>
+
                             </div>
                         </div>
                     </a>
                     <ul class="sub_menu">
-                    	<a href="message.html" class=""><li>Messages</li></a>
-                        <a href="" class=""><li>Feedback</li></a>
-                        <a href="" class=""><li>Ratings</li></a>
+                        <a href="message.html" class="">
+                            <li>Messages</li>
+                        </a>
+                        <a href="" class="">
+                            <li>Feedback</li>
+                        </a>
+                        <a href="" class="">
+                            <li>Ratings</li>
+                        </a>
                     </ul>
                 </div>
 
-				<a href="#"><div class="flex">
-					<div class="li_img">
-						<img src="image/setting.png">
-					</div>
-					<div class="li_name setting">
-						<li>SETTINGS</li>
-					</div>
-				</div></a>
-					<!-- <ul class="">
+                <a href="#">
+                    <div class="flex">
+                        <div class="li_img">
+                            <img src="image/setting.png">
+                        </div>
+                        <div class="li_name setting">
+                            <li>SETTINGS</li>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="#">
+                    <div class="flex">
+                        <div class="li_img">
+                            <img src="image/logout.png">
+                        </div>
+                        <div class="li_name setting">
+                            <li>LOGOUT</li>
+                        </div>
+                    </div>
+                </a>
+                <!-- <ul class="">
 						<a href=""><li>add candidates</li></a>
 						<a href=""><li>add candidates</li></a>
 					</ul> -->
-				
-			</div>
-			
-			
-		</ul>
-	</div>
+
+            </div>
+
+
+        </ul>
+    </div>
 
 
 
-	
-	<section class="content section1" >
-		<div class="dashboard_holder">
-			<div class="dashboard_title">
 
-			  	<div class="new_btn_holder">
-			  		<div class="hamburger">
-						<span></span>
-					</div>
+    <section class="content section1">
+        <div class="dashboard_holder">
+            <div class="dashboard_title">
 
-					<div class="new_nav">
-		
-						<ul>
-							<div class="new_name">
-								<p>MENU</p>
-							</div>
-							<div class="popnav">
+                <div class="new_btn_holder">
+                    <div class="hamburger">
+                        <span></span>
+                    </div>
 
-								<a href="admin.php"><div class="flex">
-									<div class="li_img">
-										<img src="image/home.png">
-									</div>
-									<div class="li_name">
-										<li>DASHBOARD</li>
-									</div>
-								</div></a>
+                    <div class="new_nav">
 
-								<a href="#"><div class="flex">
-									<div class="li_img">
-										<img src="image/candidate.png">
-									</div>
-									<div class="li_name">
-										<li>CANDIDATE</li>
-									</div>
-								</div></a>
+                        <ul>
+                            <div class="new_name">
+                                <p>MENU</p>
+                            </div>
+                            <div class="popnav">
 
-								<a href="add_stud_firebase.php"><div class="flex">
-									<div class="li_img">
-										<img src="image/voters.png">
-									</div>
-									<div class="li_name">
-										<li>VOTERS</li>
-									</div>
-								</div></a>
+                                <a href="admin.php">
+                                    <div class="flex">
+                                        <div class="li_img">
+                                            <img src="image/home.png">
+                                        </div>
+                                        <div class="li_name">
+                                            <li>DASHBOARD</li>
+                                        </div>
+                                    </div>
+                                </a>
 
-								<a href="#"><div class="flex">
-									<div class="li_img">
-										<img src="image/rankings.png">
-									</div>
-									<div class="li_name">
-										<li>RESULTS</li>
-									</div>
-								</div></a>
-				
-							</div>
-			
-			
-						</ul>
-					</div>
-					
-			  	</div>
+                                <a href="#">
+                                    <div class="flex">
+                                        <div class="li_img">
+                                            <img src="image/candidate.png">
+                                        </div>
+                                        <div class="li_name">
+                                            <li>CANDIDATE</li>
+                                        </div>
+                                    </div>
+                                </a>
 
-				<div>
-					<h2>DASHBOARD</h2>
-				</div>
+                                <a href="add_stud_firebase.php">
+                                    <div class="flex">
+                                        <div class="li_img">
+                                            <img src="image/voters.png">
+                                        </div>
+                                        <div class="li_name">
+                                            <li>VOTERS</li>
+                                        </div>
+                                    </div>
+                                </a>
 
-				<div class="divide">
-					<div class="admin_img">
-						<div>
-							
-						</div>
-						<div>
-							<img src="image/avenueLogo.png">
-						</div>
-					</div>
-					<div class="logout_part">
-						<div>
-							
-								<form id='formlog' action='' method='post'>
-								<input type='submit' id='logoutbtn' value='Logout' onclick="logout()">
-								
-							 
-						</div>
-						<div>
-							<img src="image/logout.png">
-						</div>	
-					</div>
-				</div>
-			</div>
+                                <a href="#">
+                                    <div class="flex">
+                                        <div class="li_img">
+                                            <img src="image/rankings.png">
+                                        </div>
+                                        <div class="li_name">
+                                            <li>RESULTS</li>
+                                        </div>
+                                    </div>
+                                </a>
+
+                            </div>
 
 
-			<!-- <div id="category_holder">
-				<form id="dateTimeForm">
-    
-    				<div>
-        				<h2>Add Category</h2>
-    				</div>
-    				<div>
-        				<input type="text" id="category"  placeholder="Category Name" required>
-    				</div>
-    				<div class="button_holder">
-        				<div>
-        					<button id="cancel" onclick="hideForm()">Cancel</button>
-        				</div>
-        				<div>
-    						<button type="button" id="confirm" onclick="sendData()">Confirm</button>
-    					</div>
-    				</div> 
-				</form>
-			</div> -->
-		
-			
+                        </ul>
+                    </div>
 
-			<div class="staffOverlay">
-				<form id="staff_form">
-    			<div>
-        			<h2>Add Staff</h2>
-    			</div>
-    			<div class="productsHolder">
-    				<div class="txtborder Name">
-    					<p>Staff Name*</p>
-        				<input type="text" id="staffName" required autofocus>
-    				</div>
+                </div>
 
-    				<div class="txtborder Category">
-    					<p>Gender*</p>
-    					<select>
-    						<option>Male</option>
-    						<option>Female</option>
-    					</select>
-    				</div>
+                <div>
+                    <h2>DASHBOARD</h2>
+                </div>
 
-    				<div class="txtborder Category">
-    					<p>Phone Number*</p>
-        				<input type="number" id="staffNumber" required maxlength="11" pattern="\d*">
-    				</div>
+                <div class="divide">
+                    <div class="admin_img">                 
+                        <img src="image/avenueLogo.png">
+                    </div>
+                    
+                </div>
+            </div>
 
-    				<div class="txtborder Name">
-    					<p>Gmail*</p>
-        				<input type="email" id="staffGmail" required>
-    				</div>
 
-    				<div class="txtborder Name">
-    					<p>Address*</p>
-        				<input type="text" id="staffAddress" required>
-    				</div>
+            <div class="new_holder">
+                <div class="inner_flex">
 
-    				<div class="txtborder Name">
-    					<p>Position*</p>
-        				<input type="text" id="staffPosition" required>
-    				</div>
+                    <div class="leftside">
+                        <div class="chartBar">
+                            <p>Monthly Sales</p>
+                            <canvas id="barChart" style=" height: 90%;"></canvas>
+                        </div>
+                        <div class="customer_list">
+                            <div class="cust_holder">
+                                <p>Customer List</p>
+                                <p class="manage">view</p>
+                            </div>
+                            <div class="user_display">
 
-    				
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rightside">
+                        <div class="innerrightside">
 
-    				<div class="txtborder Price">
-        				<div class="file_holder">
-        					<p>Upload Image*</p>
-        					<input type="file" name="" id="staffImage">
-        				</div>
-        			</div>
+                            <div class="donutholder">
+                                <div class="chartDougnut">
+                                    <p>Top Selling Product</p>
+                                    <canvas id="dougnutChart"></canvas>
+                                </div>
+                            </div>
 
-    				
-        			
-    			</div>
-    			<div class="button_holder">
-        			<div>
-        				<button id="cancel" class="cancelBtn" onclick="hideStaff()">Cancel</button>
-        			</div>
-        			<div>
-    					<button type="button" id="confirm" onclick="sendStaff()">Confirm</button>
-    				</div>
-    			</div>  
-			</form>
-			</div>
 
-			<div class="new_holder">
-				<div class="inner_flex">
+                            <div class="newcard">
 
-					<div class="leftside">
-						<div class="chartBar">
-							<p>Monthly Sales</p>
-							<canvas id="barChart" style=" height: 90%;"></canvas>
-						</div>
-						<div class="customer_list">
-							<div class="cust_holder">
-								<p>Customer List</p>
-								<p class="manage">view</p>
-							</div>
-							<div class="user_display">
-								
-							</div>
-						</div>
-					</div>
-					<div class="rightside">
-						<div class="innerrightside">
+                                <div class="card">
+                                    <div class="reg_voters">
+                                        <p>Registered Staff</p>
+                                    </div>
+                                    <div class="card_icon">
+                                        <div class="numbers" id="registeredVotersCount">
+                                            <p class="staffNum">00</p>
+                                        </div>
+                                        <div>
+                                            <img src="image/voting.png">
+                                        </div>
+                                    </div>
+                                </div>
 
-							<div class="donutholder">
-								<div class="chartDougnut">
-									<p>Top Selling Product</p>
-									<canvas id="dougnutChart"></canvas>
-								</div>
-							</div>
-							
+                                <div class="card">
+                                    <div class="reg_voters">
+                                        <p>Registered Customer</p>
+                                    </div>
+                                    <div class="card_icon">
+                                        <div class="numbers" id="candidatesCount">
+                                            <p class="custNum">00</p>
+                                        </div>
+                                        <div>
+                                            <img src="image/person.png">
+                                        </div>
+                                    </div>
+                                </div>
 
-							<div class="newcard">
-								
-								<div class="card">
-									<div class="reg_voters">
-										<p>Registered Staff</p>
-									</div>
-									<div class="card_icon">
-										<div class="numbers" id="registeredVotersCount">
-											<p class="staffNum">00</p>
-										</div>
-										<div>
-											<img src="image/voting.png">	
-										</div>
-									</div>
-		    					</div>
+                                <div class="card">
+                                    <div class="reg_voters">
+                                        <p>Numbers of Products</p>
+                                    </div>
+                                    <div class="card_icon">
+                                        <div class="numbers">
+                                            <p class="prodNum">00</p>
+                                        </div>
+                                        <div>
+                                            <img src="image/product.png">
+                                        </div>
+                                    </div>
+                                </div>
 
-		    					<div class="card">
-									<div class="reg_voters">
-										<p>Registered Customer</p>
-									</div>
-									<div class="card_icon">
-										<div class="numbers" id="candidatesCount">
-											<p class="custNum">00</p>
-										</div>
-										<div>
-											<img src="image/person.png">	
-										</div>
-									</div>
-		    					</div>
+                                <div class="card">
+                                    <div class="reg_voters">
+                                        <p>Daily Profit</p>
+                                    </div>
+                                    <div class="card_icon">
+                                        <div class="numbers">
+                                            <p class="totalProfit">00</p>
+                                        </div>
+                                        <div>
+                                            <img src="image/cash.png">
+                                        </div>
+                                    </div>
+                                </div>
 
-		    					<div class="card">
-									<div class="reg_voters">
-										<p>Numbers of Products</p>
-									</div>
-									<div class="card_icon">
-										<div class="numbers">
-											<p class="prodNum">00</p>
-										</div>
-										<div>
-											<img src="image/product.png">	
-										</div>
-									</div>
-		    					</div>
+                            </div>
 
-		    					<div class="card">
-									<div class="reg_voters">
-										<p>Daily Profit</p>
-									</div>
-									<div class="card_icon">
-										<div class="numbers">
-											<p class="totalProfit">00</p>
-										</div>
-										<div>
-											<img src="image/cash.png">	
-										</div>
-									</div>
-		    					</div>
+                        </div>
+                        <div class="tableHolder">
+                            <div class="table1">
+                                <div class="order">
+                                    <div>
+                                        <p id="tableTitle">Pending Orders</p>
+                                    </div>
+                                    <div class="tableBtnHolder">
+                                        <div>
+                                            <button id="btnPending" type="button">Pending Orders</button>
+                                        </div>
+                                        <div>
+                                            <button id="btnAccepted" type="button">Accepted Orders</button>
+                                        </div>
+                                        <div>
+                                            <button id="btnToShip" type="button">To Ship Orders</button>
+                                        </div>
+                                        <div>
+                                            <button id="btnCompleted" type="button">Completed Orders</button>
+                                        </div>
+                                    </div>
+                                </div>
 
-							</div>
+                                <table id="ordersTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Customer</th>
+                                            <th>Product</th>
+                                            <th>Size</th>
+                                            <th>Sugar Level</th>
+                                            <th>Price</th>
+                                            <th>Quantity</th>
+                                            <th>Payment</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ordersTableBody">
 
-						</div>
-						<div class="tableHolder">
-							<div class="table1">
-								<div class="order">
-									<div>
-										<p id="tableTitle">Pending Orders</p>
-									</div>
-									<div class="tableBtnHolder">
-										<div>
-                    						<button id="btnPending">Pending Orders</button>
-                						</div>
-                						<div>
-                    						<button id="btnAccepted">Accepted Orders</button>
-               						 	</div>
-               						 	<div>
-               						     	<button id="btnToShip">To Ship Orders</button>
-               						 	</div>
-               						 	<div>
-               						     	<button id="btnCompleted">Completed Orders</button>
-               						 	</div>
-									</div>
-            					</div>
+                                    </tbody>
+                                </table>
 
-                				<table id="ordersTable">
-                    				<thead>
-                        				<tr>
-                        					<th>Order ID</th>
-                            				<th>Customer</th>
-                            				<th>Product</th>
-                            				<th>Size</th>
-                            				<th>Sugar Level</th>
-                            				<th>Price</th>
-                            				<th>Quantity</th>
-                            				<th>Payment</th>
-                            				<th>Action</th>
-                        				</tr>
-                    				</thead>
-                    				<tbody id="ordersTableBody">
-                        
-                    				</tbody>
-                				</table>
+                                <table id="acceptedOrdersTable" style="display:none;">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Customer</th>
+                                            <th>Product</th>
+                                            <th>Size</th>
+                                            <th>Sugar Level</th>
+                                            <th>Price</th>
+                                            <th>Quantity</th>
+                                            <th>Payment</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="acceptedOrdersTableBody">
+                                        <!-- Accepted orders will be displayed here -->
+                                    </tbody>
+                                </table>
 
-        						<table id="acceptedOrdersTable" style="display:none;">
-            						<thead>
-                						<tr>
-                							<th>Order ID</th>
-                    						<th>Customer</th>
-                    						<th>Product</th>
-                    						<th>Size</th>
-                    						<th>Sugar Level</th>
-                    						<th>Price</th>
-                    						<th>Quantity</th>
-                    						<th>Payment</th>
-                    						<th>Action</th>
-                						</tr>
-            						</thead>
-            						<tbody id="acceptedOrdersTableBody">
-                						<!-- Accepted orders will be displayed here -->
-            						</tbody>
-        						</table>
+                                <!-- To Ship Orders Table -->
+                                <table id="toShipOrdersTable" style="display:none;">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Customer</th>
+                                            <th>Product</th>
+                                            <th>Size</th>
+                                            <th>Sugar Level</th>
+                                            <th>Price</th>
+                                            <th>Quantity</th>
+                                            <th>Payment</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="toShipOrdersTableBody">
+                                        <!-- To ship orders will be displayed here -->
+                                    </tbody>
+                                </table>
 
-        <!-- To Ship Orders Table -->
-        						<table id="toShipOrdersTable" style="display:none;">
-            						<thead>
-                						<tr>
-                						 <th>Order ID</th>
-                   						 <th>Customer</th>
-                   						 <th>Product</th>
-                   						 <th>Size</th>
-                   						 <th>Sugar Level</th>
-                    					 <th>Price</th>
-                    					 <th>Quantity</th>
-                    					 <th>Payment</th>
-                    					 <th>Action</th>
-                						</tr>
-            						</thead>
-            						<tbody id="toShipOrdersTableBody">
-                <!-- To ship orders will be displayed here -->
-            						</tbody>
-        						</table>
+                                <!-- Completed Orders Table -->
+                                <table id="completedOrdersTable" style="display:none;">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Customer</th>
+                                            <th>Product</th>
+                                            <th>Size</th>
+                                            <th>Sugar Level</th>
+                                            <th>Price</th>
+                                            <th>Quantity</th>
+                                            <th>Payment</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="completedOrdersTableBody">
+                                        <!-- Completed orders will be displayed here -->
+                                    </tbody>
+                                </table>
+                            </div>
 
-        <!-- Completed Orders Table -->
-        						<table id="completedOrdersTable" style="display:none;">
-            						<thead>
-                						<tr>
-                							<th>Order ID</th>
-                   						 	<th>Customer</th>
-                   						 	<th>Product</th>
-                   						 	<th>Size</th>
-                   						 	<th>Sugar Level</th>
-                    					 	<th>Price</th>
-                    					 	<th>Quantity</th>
-                    					 	<th>Payment</th>
-                    					 	<th>Action</th>
-                						</tr>
-            						</thead>
-            						<tbody id="completedOrdersTableBody">
-                <!-- Completed orders will be displayed here -->
-            						</tbody>
-        						</table>                				
-							</div>
 
-							
-						</div>
-						
+                        </div>
 
-					</div>
 
-				</div>	
-			</div>
+                    </div>
 
-		</div>
-	</section>
-	
-	<div class="custpopupoverlay">
+                </div>
+            </div>
 
-		<div class="holding">
-			<div class="customer_details">
-				<div class="close">&times;</div>
-			</div>
-			<div class="custpopup">
-				<div class="xbtn">&times;</div>
-				<h2>Manage Customer Account</h2>
+        </div>
+    </section>
 
-				<div class="user_manage"></div>
-			</div>
-		</div>
+    <div class="custpopupoverlay">
 
-	</div>
+        <div class="holding">
+            <div class="customer_details">
+                <div class="close">&times;</div>
+            </div>
+            <div class="custpopup">
+                <div class="xbtn">&times;</div>
+                <h2>Manage Customer Account</h2>
 
-	<div class="custpopupoverlay1">
+                <div class="user_manage"></div>
+            </div>
+        </div>
 
-		<div class="holding">
-			<div class="">
-				<div class="close">&times;</div>
-			</div>
-			<div class="custpopup1">
-				<div class="xbtn3">&times;</div>
-				<h2>Manage Staff Account</h2>
+    </div>
 
-				<div class="search-bar">
-    				<input type="text" id="staffSearch" placeholder="Search for Staff...">
-    				<div class="btn-hold">
-    					<details>
-    						<summary><img src="image/add.png"></summary>
-    						<ul>
-    							<li onclick="showStaff()">Add Staff</li>
-    							
-    						</ul>
-    					</details>
-    					<!-- <button id="show_form" onclick="showForm()">Add Category</button>
+    <div class="custpopupoverlay1">
+
+        <div class="holding">
+
+            <div class="custpopup1">
+                <div class="xbtn3">&times;</div>
+                <h2>Manage Staff Account</h2>
+
+                <div class="search-bar">
+                    <input type="text" id="staffSearch" placeholder="Search for Staff...">
+                    <div class="btn-hold">
+                        <details>
+                            <summary><img src="image/add.png"></summary>
+                            <ul>
+                                <li onclick="showAddStaffForm()">Add Staff</li>
+
+                            </ul>
+                        </details>
+                        <!-- <button id="show_form" onclick="showForm()">Add Category</button>
 						<button id="show_prod" onclick="showProd()">Add Products</button> -->
-    				</div>
-				</div>
-			</div>
-			<div id="displayStaff">
-				
-			</div>
-		</div>
+                    </div>
+                </div>
+            </div>
+            <div id="displayStaff">
 
-	</div>
+            </div>
+        </div>
 
-	<div class="ProductPopupOverlay">
+    </div>
 
-		<div class="holding2">
-			
-			<div class="sideBar">
-    			<ul>
-        			<li class="category-filter selected"  data-category="Milktea">Milktea</li>
-        			<li class="category-filter" data-category="Fruit Tea">Fruit Tea</li>
-        			<li class="category-filter" data-category="Frappe">Frappe</li>
-        			<li class="category-filter" data-category="Milkshake">Milkshake</li>
-        			<li class="category-filter" data-category="Coolers">Coolers</li>
-        			<li class="category-filter" data-category="Add-Ons">Add-ons</li>
-        			<li class="category-filter" data-category="Egg Drop Sandwich">Egg Drop</li>
-        			<li class="category-filter" data-category="Pasta">Pasta</li>
-        			<li class="category-filter" data-category="Pizza">Pizza</li>
-        			<li class="category-filter" data-category="Mozzarella">Mozzarella</li>
-        			<li class="category-filter" data-category="Fries">Fries</li>
-        			<li class="category-filter" data-category="Cheese Sticks">Cheese Sticks</li>
-        			<li class="category-filter" data-category="Nachos">Nachos</li>
-        			<li class="category-filter" data-category="Chicken Poppers">Chicken Poppers</li>
-    			</ul>
-			</div>
-			<div class="search_holder">
-				<div class="prod-title">
-					<h2>Manage Products</h2>
-				</div>
-				
-				<div class="search-bar">
-    				<input type="text" id="productSearch" placeholder="Search for products...">
-    				<div class="btn-hold">
-    					<details>
-    						<summary><img src="image/add.png"></summary>
-    						<ul>
-    							<li onclick="showForm()">Add Category</li>
-    							<a href="product.html"><li>Add Products</li></a>
-    						</ul>
-    					</details>
-    					<!-- <button id="show_form" onclick="showForm()">Add Category</button>
+    <div class="ProductPopupOverlay">
+
+        <div class="holding2">
+
+            <div class="sideBar">
+                <ul>
+                    <li class="category-filter selected" data-category="Milktea">Milktea</li>
+                    <li class="category-filter" data-category="Fruit Tea">Fruit Tea</li>
+                    <li class="category-filter" data-category="Frappe">Frappe</li>
+                    <li class="category-filter" data-category="Milkshake">Milkshake</li>
+                    <li class="category-filter" data-category="Coolers">Coolers</li>
+                    <li class="category-filter" data-category="Add-Ons">Add-ons</li>
+                    <li class="category-filter" data-category="Egg Drop Sandwich">Egg Drop</li>
+                    <li class="category-filter" data-category="Pasta">Pasta</li>
+                    <li class="category-filter" data-category="Pizza">Pizza</li>
+                    <li class="category-filter" data-category="Mozzarella">Mozzarella</li>
+                    <li class="category-filter" data-category="Fries">Fries</li>
+                    <li class="category-filter" data-category="Cheese Sticks">Cheese Sticks</li>
+                    <li class="category-filter" data-category="Nachos">Nachos</li>
+                    <li class="category-filter" data-category="Chicken Poppers">Chicken Poppers</li>
+                </ul>
+            </div>
+            <div class="search_holder">
+                <div class="prod-title">
+                    <h2>Manage Products</h2>
+                </div>
+            
+
+                <div class="search-bar">
+                    <input type="text" id="productSearch" placeholder="Search for products...">
+                    <div class="btn-hold">
+                        <details>
+                            <summary><img src="image/add.png"></summary>
+                            <ul>
+                                <li onclick="showForm()">Add Category</li>
+                                <a href="product.html">
+                                    <li>Add Products</li>
+                                </a>
+                            </ul>
+                        </details>
+                        <!-- <button id="show_form" onclick="showForm()">Add Category</button>
 						<button id="show_prod" onclick="showProd()">Add Products</button> -->
-    				</div>
-				</div>
-				<div class="custpopup2">
-				
-				<div class="xbtn2">&times;</div>
-				
-				<div class="product_manage"></div>
+                    </div>
+                </div>
+                <div class="custpopup2">
 
-			</div>
-			</div>
-			
-			<div class="customer_details2">
-				
-			</div>
+                    <div class="xbtn2">&times;</div>
 
-		</div>
+                    <div class="product_manage"></div>
 
-	</div>
+                </div>
+            </div>
 
-	<!-- <div class="staffFormContainer">
+            <div class="customer_details2">
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- <div class="staffFormContainer">
     <h2>Add New Staff</h2>
     <form id="staffForm" action="/submit-staff" method="post" enctype="multipart/form-data">
         <div class="form-group">
@@ -748,15 +708,14 @@
     </form>
 </div> -->
 
-	
-	
+
+
 
 
 </body>
 
-
-<script src="dougnut.js"></script>
-<script src="bar.js"></script>
+<script src="js/dougnut.js"></script>
+<script src="js/bar.js"></script>
 
 <script src="js/jquery.js"></script>
 <script src="js/script.js"></script>
@@ -764,105 +723,105 @@
 
 <!-- javascript to table hide and show -->
 <script type="text/javascript">
-	document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
 
-	const buttons = document.querySelectorAll('.tableBtnHolder button');
+        const buttons = document.querySelectorAll('.tableBtnHolder button');
 
-    function resetButtonStyles() {
-        buttons.forEach(btn => {
-            btn.style.backgroundColor = '';
-        });
-    }
-
-    function selectButton(button) {
-        resetButtonStyles();
-        button.style.backgroundColor = 'green';
-    }
-
-    // Auto-select the Pending Orders button
-    const defaultButton = document.getElementById('btnPending');
-    selectButton(defaultButton);
-    showTable('pending');
-
-    buttons.forEach(button => {
-        button.addEventListener('click', function() {
-            selectButton(this);
-            const orderType = this.id.replace('btn', '').toLowerCase();
-            showTable(orderType);
-        });
-    });
-
-    function showTable(orderType) {
-        const pendingOrdersTable = document.getElementById('ordersTable'); 
-        const acceptedOrdersTable = document.getElementById('acceptedOrdersTable');
-        const toShipOrdersTable = document.getElementById('toShipOrdersTable');
-        const completedOrdersTable = document.getElementById('completedOrdersTable');
-
-        const tableTitle = document.getElementById('tableTitle');
-
-        // Hide all tables
-        pendingOrdersTable.style.display = 'none';
-        acceptedOrdersTable.style.display = 'none';
-        toShipOrdersTable.style.display = 'none';
-        completedOrdersTable.style.display = 'none';
-
-        // Show the correct table based on the order type
-        if (orderType === 'pending') {
-            pendingOrdersTable.style.display = 'table';
-            tableTitle.textContent = 'Pending Orders';
-        } else if (orderType === 'accepted') {
-            acceptedOrdersTable.style.display = 'table';
-            tableTitle.textContent = 'Accepted Orders';
-        } else if (orderType === 'toShip') {
-            toShipOrdersTable.style.display = 'table';
-            tableTitle.textContent = 'To Ship Orders';
-        } else if (orderType === 'completed') {
-            completedOrdersTable.style.display = 'table';
-            tableTitle.textContent = 'Completed Orders';
+        function resetButtonStyles() {
+            buttons.forEach(btn => {
+                btn.style.backgroundColor = '';
+            });
         }
-    }
 
-    // Add event listeners to buttons
-    document.getElementById('btnPending').addEventListener('click', function() {
+        function selectButton(button) {
+            resetButtonStyles();
+            button.style.backgroundColor = 'green';
+        }
+
+        // Auto-select the Pending Orders button
+        const defaultButton = document.getElementById('btnPending');
+        selectButton(defaultButton);
+        showTable('pending');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function () {
+                selectButton(this);
+                const orderType = this.id.replace('btn', '').toLowerCase();
+                showTable(orderType);
+            });
+        });
+
+        function showTable(orderType) {
+            const pendingOrdersTable = document.getElementById('ordersTable');
+            const acceptedOrdersTable = document.getElementById('acceptedOrdersTable');
+            const toShipOrdersTable = document.getElementById('toShipOrdersTable');
+            const completedOrdersTable = document.getElementById('completedOrdersTable');
+
+            const tableTitle = document.getElementById('tableTitle');
+
+            // Hide all tables
+            pendingOrdersTable.style.display = 'none';
+            acceptedOrdersTable.style.display = 'none';
+            toShipOrdersTable.style.display = 'none';
+            completedOrdersTable.style.display = 'none';
+
+            // Show the correct table based on the order type
+            if (orderType === 'pending') {
+                pendingOrdersTable.style.display = 'table';
+                tableTitle.textContent = 'Pending Orders';
+            } else if (orderType === 'accepted') {
+                acceptedOrdersTable.style.display = 'table';
+                tableTitle.textContent = 'Accepted Orders';
+            } else if (orderType === 'toShip') {
+                toShipOrdersTable.style.display = 'table';
+                tableTitle.textContent = 'To Ship Orders';
+            } else if (orderType === 'completed') {
+                completedOrdersTable.style.display = 'table';
+                tableTitle.textContent = 'Completed Orders';
+            }
+        }
+
+        // Add event listeners to buttons
+        document.getElementById('btnPending').addEventListener('click', function () {
+            showTable('pending');
+        });
+        document.getElementById('btnAccepted').addEventListener('click', function () {
+            showTable('accepted');
+        });
+        document.getElementById('btnToShip').addEventListener('click', function () {
+            showTable('toShip');
+        });
+        document.getElementById('btnCompleted').addEventListener('click', function () {
+            showTable('completed');
+        });
+
+        // Initially show pending orders table
         showTable('pending');
     });
-    document.getElementById('btnAccepted').addEventListener('click', function() {
-        showTable('accepted');
-    });
-    document.getElementById('btnToShip').addEventListener('click', function() {
-        showTable('toShip');
-    });
-    document.getElementById('btnCompleted').addEventListener('click', function() {
-        showTable('completed');
-    });
-
-    // Initially show pending orders table
-    showTable('pending');
-});
 
 </script>
 
 
 <script type="text/javascript">
-	
-	
-	// document.getElementById("products").addEventListener("submit", function (e) {
+
+
+    // document.getElementById("products").addEventListener("submit", function (e) {
     //     e.preventDefault(); // Prevent the default form submission behavior
     //     sendData();
     // });
 
-	// document.getElementById("dateTimeForm").addEventListener("submit", function (e) {
+    // document.getElementById("dateTimeForm").addEventListener("submit", function (e) {
     //     e.preventDefault(); // Prevent the default form submission behavior
     //     sendData();
     // });
     // popup for category
-	//  function showForm() {
+    //  function showForm() {
     //     var form = document.getElementById('dateTimeForm');
     //     var overlay = document.getElementById('category_holder');
 
     //     form.style.display = 'block';
     //     overlay.style.display = 'block';
-        
+
     // }
 
     function hideForm() {
@@ -880,15 +839,15 @@
 
 
 
-// popup for products
-     function showProd() {
+    // popup for products
+    function showProd() {
         var form = document.getElementById('products');
         var overlay = document.getElementById('overlay');
-		var cat = document.getElementById('dateTimeForm');
+        var cat = document.getElementById('dateTimeForm');
 
         form.style.display = 'block';
         overlay.style.display = 'block';
-		
+
     }
     function hideProd() {
         var form = document.getElementById('products');
@@ -896,7 +855,7 @@
         form.style.display = 'none';
         overlay.style.display = 'none';
     }
-   
+
     function sendData() {
         var form = document.getElementById('products');
         form.style.display = 'none';
@@ -905,28 +864,28 @@
 
 
     function showStaff() {
-    document.querySelector('.staffOverlay').style.display = 'block';
-}
+        document.querySelector('.staffOverlay').style.display = 'block';
+    }
 
-function hideStaff() {
-    document.querySelector('.staffOverlay').style.display = 'none';
-}
+    function hideStaff() {
+        document.querySelector('.staffOverlay').style.display = 'none';
+    }
 
-// Select all the details elements
-const detailsElements = document.querySelectorAll('.details-wrapper details');
+    // Select all the details elements
+    const detailsElements = document.querySelectorAll('.details-wrapper details');
 
-detailsElements.forEach((detail) => {
-    detail.addEventListener('toggle', function () {
-        if (detail.open) {
-            // Close all other details
-            detailsElements.forEach((otherDetail) => {
-                if (otherDetail !== detail && otherDetail.open) {
-                    otherDetail.open = false;
-                }
-            });
-        }
+    detailsElements.forEach((detail) => {
+        detail.addEventListener('toggle', function () {
+            if (detail.open) {
+                // Close all other details
+                detailsElements.forEach((otherDetail) => {
+                    if (otherDetail !== detail && otherDetail.open) {
+                        otherDetail.open = false;
+                    }
+                });
+            }
+        });
     });
-});
 
 
 </script>
@@ -935,124 +894,166 @@ detailsElements.forEach((detail) => {
 
 <script>
 
-        // Initialize Firebase
-  const firebaseConfig = {
-  apiKey: "AIzaSyCMTIQkR66Zz-ENPofBTkuxg-J1oRpaCf4",
-  authDomain: "avenue-t-house.firebaseapp.com",
-  databaseURL: "https://avenue-t-house-default-rtdb.firebaseio.com",
-  projectId: "avenue-t-house",
-  storageBucket: "avenue-t-house.appspot.com",
-  messagingSenderId: "928838424164",
-  appId: "1:928838424164:web:2c289e01a7744d8df57171",
-  measurementId: "G-GMMWS6J7ED"
-};
+    // Initialize Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyCMTIQkR66Zz-ENPofBTkuxg-J1oRpaCf4",
+        authDomain: "avenue-t-house.firebaseapp.com",
+        databaseURL: "https://avenue-t-house-default-rtdb.firebaseio.com",
+        projectId: "avenue-t-house",
+        storageBucket: "avenue-t-house.appspot.com",
+        messagingSenderId: "928838424164",
+        appId: "1:928838424164:web:2c289e01a7744d8df57171",
+        measurementId: "G-GMMWS6J7ED"
+    };
 
-        firebase.initializeApp(firebaseConfig);
-        
-        const database = firebase.database();
-        const storage = firebase.storage();
-        const categorySelect = document.getElementById('categorySelect');
-        // const refer = firebase.database().ref('TopSelling');
+    firebase.initializeApp(firebaseConfig);
 
-
-        // Retrieve current user from sessionStorage
-// const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
-
-// if (currentUser) {
-//     console.log('Logged in user:', currentUser.staffName);
-//     // You can now use `currentUser.staffName` or other info throughout your dashboard
-// } else {
-//     // No user is logged in, redirect to login page
-//     window.location.href = 'login.html';
-// }
-
-// function logout() {
-//     // Clear the sessionStorage to log the user out
-//     sessionStorage.removeItem('currentUser');
-    
-//     // Redirect to the login page
-//     window.location.href = 'login.html';
-// }
+    const database = firebase.database();
+    const storage = firebase.storage();
+    const categorySelect = document.getElementById('categorySelect');
+    // const refer = firebase.database().ref('TopSelling');
 
 
+    // Retrieve the authenticated staff data from sessionStorage
+    // const staffData = JSON.parse(sessionStorage.getItem("authenticatedStaff"));
 
-   
+    // if (staffData) {
+    //     console.log(`Welcome, ${staffData.name}`);
+    //     // Use staffData.name or other properties as needed
+    // } else {
+    //     // If no staff data is found, redirect to login page
+    //     window.location.href = "adminlogin.html"; // Adjust as necessary
+    // }
 
+
+    // document.getElementById("logoutbtn").addEventListener("click", function(event) {
+    //     event.preventDefault(); // Prevent form submission, if inside a form
+
+    //     // Remove user session data
+    //     sessionStorage.removeItem("authenticatedStaff");
+
+    //     // Redirect to login page
+    //     window.location.href = "adminlogin.html"; // Adjust path as needed
+    // });
 
 
 
-// Function to show the SweetAlert popup with the form
-function showForm() {
-    Swal.fire({
-        title: 'Add Category',
-        input: 'text',  // Use SweetAlert's built-in input field
-        inputPlaceholder: 'Enter category name',
-        showCancelButton: true,
-        confirmButtonText: 'Confirm',
-        inputValidator: (value) => {
-            if (!value) {
-                return "Please enter a category name.";
-            }
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            sendData(result.value); // Pass the category name directly to sendData
-        }
-    });
-}
+    // Reference to your Firebase database
+    const dbRef = firebase.database().ref("Orders");
 
-// Function to handle form submission, with categoryInput as a parameter
-function sendData(categoryInput) {
-    const categoriesRef = database.ref('category');
+    // Function to update the button counts
+    function updateButtonCounts() {
+        let pendingCount = 0;
+        let acceptedCount = 0;
+        let toShipCount = 0;
+        let completedCount = 0;
 
-    if (categoryInput === '') {
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Please enter a category.',
+        // Fetch the data from Firebase
+        dbRef.once("value", (snapshot) => {
+            snapshot.forEach((userSnapshot) => {
+                userSnapshot.forEach((orderSnapshot) => {
+                    const orderData = orderSnapshot.val();
+
+                    // Check order status and count accordingly
+                    if (orderData.status === "pending") {
+                        pendingCount += 1;
+                    } else if (orderData.status === "accepted") {
+                        acceptedCount += 1;
+                    } else if (orderData.status === "in transit") {
+                        toShipCount += 1;
+                    } else if (orderData.status === "delivered") {
+                        completedCount += 1;
+                    }
+                });
+            });
+
+            // Update the button text dynamically
+            document.getElementById("btnPending").textContent = `Pending Orders (${pendingCount})`;
+            document.getElementById("btnAccepted").textContent = `Accepted Orders (${acceptedCount})`;
+            document.getElementById("btnToShip").textContent = `To Ship Orders (${toShipCount})`;
+            document.getElementById("btnCompleted").textContent = `Completed Orders (${completedCount})`;
         });
-        return;
     }
 
+    // Call the updateButtonCounts function immediately when the page loads
+    updateButtonCounts();
+
+    // Set an interval to update the counts every 5 seconds (5000 ms)
+    setInterval(updateButtonCounts, 5000);
 
 
+    // Function to show the SweetAlert popup with the form
+    function showForm() {
+        Swal.fire({
+            title: 'Add Category',
+            input: 'text',  // Use SweetAlert's built-in input field
+            inputPlaceholder: 'Enter category name',
+            showCancelButton: true,
+            confirmButtonText: 'Confirm',
+            inputValidator: (value) => {
+                if (!value) {
+                    return "Please enter a category name.";
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                sendData(result.value); // Pass the category name directly to sendData
+            }
+        });
+    }
 
-    // Check if the category already exists
-    categoriesRef.orderByValue().equalTo(categoryInput).once('value', (snapshot) => {
-        if (snapshot.exists()) {
-            // Category already exists
+    // Function to handle form submission, with categoryInput as a parameter
+    function sendData(categoryInput) {
+        const categoriesRef = database.ref('category');
+
+        if (categoryInput === '') {
             Swal.fire({
-                icon: 'warning',
-                title: 'Category Exists',
-                text: 'This category already exists!',
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please enter a category.',
             });
-        } else {
-            // Category does not exist, proceed to add it
-            categoriesRef.once('value', (snapshot) => {
-                const categoryCount = snapshot.numChildren();
-                const newCategoryKey = 'Category' + (categoryCount + 1);
-
-                // Save the new category with the generated key
-                categoriesRef.child(newCategoryKey).set(categoryInput)
-                    .then(() => {
-                        // Data has been successfully sent to Firebase
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: 'Category added successfully!',
-                        });
-                    })
-                    .catch((error) => {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: `Error sending data: ${error.message}`,
-                        });
-                    });
-            });
+            return;
         }
-    });
-}
+
+
+
+
+        // Check if the category already exists
+        categoriesRef.orderByValue().equalTo(categoryInput).once('value', (snapshot) => {
+            if (snapshot.exists()) {
+                // Category already exists
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Category Exists',
+                    text: 'This category already exists!',
+                });
+            } else {
+                // Category does not exist, proceed to add it
+                categoriesRef.once('value', (snapshot) => {
+                    const categoryCount = snapshot.numChildren();
+                    const newCategoryKey = 'Category' + (categoryCount + 1);
+
+                    // Save the new category with the generated key
+                    categoriesRef.child(newCategoryKey).set(categoryInput)
+                        .then(() => {
+                            // Data has been successfully sent to Firebase
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'Category added successfully!',
+                            });
+                        })
+                        .catch((error) => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: `Error sending data: ${error.message}`,
+                            });
+                        });
+                });
+            }
+        });
+    }
 
 
 
@@ -1060,50 +1061,55 @@ function sendData(categoryInput) {
 
 
     function fetchAndDisplayUsers() {
-            const usersRef = database.ref('Users');
-            usersRef.once('value', (snapshot) => {
-                const users = snapshot.val();
-                const customerListDiv = document.querySelector('.user_display');
+        const usersRef = database.ref('Users');
+        usersRef.once('value', (snapshot) => {
+            const users = snapshot.val();
+            const customerListDiv = document.querySelector('.user_display');
 
-                for (const userId in users) {
-                    if (users.hasOwnProperty(userId)) {
-                        const user = users[userId];
-                        
-                        // Create a div for each user
-                        const userDiv = document.createElement('div');
-                        userDiv.classList.add('user_indi');
+            for (const userId in users) {
+                if (users.hasOwnProperty(userId)) {
+                    const user = users[userId];
 
-                        // Add user information
-                        userDiv.innerHTML = `
+                    // Create a div for each user
+                    const userDiv = document.createElement('div');
+                    userDiv.classList.add('user_indi');
+
+                    // Add user information
+                    userDiv.innerHTML = `
                             <p>${user.fullName}</p>
                         `;
 
-                        // Append the user div to the customer list div
-                        customerListDiv.appendChild(userDiv);
-                    }
+                    // Append the user div to the customer list div
+                    customerListDiv.appendChild(userDiv);
                 }
-            });
-        }
+            }
+        });
+    }
 
-        function manageCustomerDisplay() {
-    const usersRef = database.ref('Users');
-    usersRef.once('value', (snapshot) => {
-        const users = snapshot.val();
-        const customerListDiv = document.querySelector('.user_manage');
-        const customerDetailsDiv = document.querySelector('.customer_details');
+    function manageCustomerDisplay() {
+        const usersRef = database.ref('Users');
+        usersRef.once('value', (snapshot) => {
+            const users = snapshot.val();
+            const customerListDiv = document.querySelector('.user_manage');
+            const customerDetailsDiv = document.querySelector('.customer_details');
 
-        for (const userId in users) {
-            if (users.hasOwnProperty(userId)) {
-                const user = users[userId];
+            for (const userId in users) {
+                if (users.hasOwnProperty(userId)) {
+                    const user = users[userId];
 
-                // Create a div for each user
-                const userDiv = document.createElement('div');
-                userDiv.classList.add('cust_manage');
+                    const profileImageUrl = user.profileImageUrl ? user.profileImageUrl : 'image/placeholder.png';
 
-                // Add user information
-                userDiv.innerHTML = `
+                    // Create a div for each user
+                    const userDiv = document.createElement('div');
+                    userDiv.classList.add('cust_manage');
+
+                    // Determine the initial block/unblock text based on user data
+                    const blockText = user.status === 'blocked' ? 'Unblock' : 'Block';
+
+                    // Add user information
+                    userDiv.innerHTML = `
                     <div>
-                        <div class="indiImg"><img src="image/admin.png" alt=""></div>
+                        <div class="indiImg"><img src="${profileImageUrl}" alt="" id="userImage"></div>
                         <div class="dislaying">${user.fullName} </div>
                     </div>
                     <div class="detail_holder">
@@ -1112,93 +1118,102 @@ function sendData(categoryInput) {
                             <summary><img src="image/more.png" alt=""></summary>
                             <ul class="managingBtn">
                                 <li class="detBtn">Details</li>
-                                <li class="blockBtn">Block</li> <!-- Added class for Block button -->
-                                <li>Restrict</li>
+                                <li class="blockBtn">${blockText}</li> <!-- Dynamic Block/Unblock text -->
+                            
                             </ul>
                         </details>
                     </div>
                 `;
 
-                // Append the user div to the customer list div
-                customerListDiv.appendChild(userDiv);
+                    // Append the user div to the customer list div
+                    customerListDiv.appendChild(userDiv);
 
-                const detailsButton = userDiv.querySelector('.detBtn');
-                detailsButton.addEventListener('click', () => {
-                    // Show the customer details div
-                    customerDetailsDiv.style.display = 'block';
+                    const detailsButton = userDiv.querySelector('.detBtn');
+                    detailsButton.addEventListener('click', () => {
+                        // Show the customer details div
+                        customerDetailsDiv.style.display = 'block';
 
-                    // Update the customer details div with user information
-                    customerDetailsDiv.innerHTML = `
+                        // Update the customer details div with user information
+                        customerDetailsDiv.innerHTML = `
                         <h4>${user.fullName}</h4>
                         <p>Phone: ${user.phoneNumber}</p>
                         <p>Address: ${user.sitioStreet} ${user.street} ${user.town}</p>
                         <!-- Add other user details here -->
                     `;
-                });
-
-                const blockButton = userDiv.querySelector('.blockBtn');
-                blockButton.addEventListener('click', () => {
-                    // SweetAlert confirmation
-                    Swal.fire({
-                        title: `Block ${user.fullName}?`,
-                        text: `Are you sure you want to block this user?`,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Yes, block',
-                        cancelButtonText: 'Cancel'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            // Update Firebase with status 'blocked'
-                            usersRef.child(userId).update({
-                                status: 'blocked'
-                            }).then(() => {
-                                Swal.fire(
-                                    'Blocked!',
-                                    `${user.fullName} has been blocked.`,
-                                    'success'
-                                );
-                            }).catch((error) => {
-                                Swal.fire(
-                                    'Error!',
-                                    `There was an error blocking the user: ${error.message}`,
-                                    'error'
-                                );
-                            });
-                        }
                     });
-                });
+
+                    const blockButton = userDiv.querySelector('.blockBtn');
+                    blockButton.addEventListener('click', () => {
+                        // Determine the action based on the current status
+                        const action = user.status === 'blocked' ? 'unblock' : 'block';
+                        const confirmationText = action === 'block' ? `Block ${user.fullName}?` : `Unblock ${user.fullName}?`;
+                        const successMessage = action === 'block' ? `${user.fullName} has been blocked.` : `${user.fullName} has been unblocked.`;
+
+                        // SweetAlert confirmation
+                        Swal.fire({
+                            title: confirmationText,
+                            text: `Are you sure you want to ${action} this user?`,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: `Yes, ${action}`,
+                            cancelButtonText: 'Cancel'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Update Firebase with the new status
+                                usersRef.child(userId).update({
+                                    status: action === 'block' ? 'blocked' : 'active' // Assuming 'active' is the status when not blocked
+                                }).then(() => {
+                                    // Update the button text and user status locally
+                                    user.status = action === 'block' ? 'blocked' : 'active';
+                                    blockButton.textContent = action === 'block' ? 'Unblock' : 'Block';
+                                    Swal.fire(
+                                        action === 'block' ? 'Blocked!' : 'Unblocked!',
+                                        successMessage,
+                                        'success'
+                                    );
+                                }).catch((error) => {
+                                    Swal.fire(
+                                        'Error!',
+                                        `There was an error updating the user status: ${error.message}`,
+                                        'error'
+                                    );
+                                });
+                            }
+                        });
+                    });
+                }
             }
-        }
-    });
-}
+        });
+    }
+
 
 
     function manageProductDisplay() {
-    const productsRef = database.ref('Products');
-    productsRef.on('value', (snapshot) => {
-        const products = snapshot.val();
-        const productListDiv = document.querySelector('.product_manage');
-        const productDetailsDiv = document.querySelector('.customer_details2');
+        const productsRef = database.ref('Products');
+        productsRef.on('value', (snapshot) => {
+            const products = snapshot.val();
+            const productListDiv = document.querySelector('.product_manage');
+            const productDetailsDiv = document.querySelector('.customer_details2');
 
-        // Function to display products based on the selected category
-        function displayProducts(category) {
-            productListDiv.innerHTML = ''; // Clear the product list div
+            // Function to display products based on the selected category
+            function displayProducts(category) {
+                productListDiv.innerHTML = ''; // Clear the product list div
 
-            for (const productId in products) {
-                if (products.hasOwnProperty(productId)) {
-                    const product = products[productId];
+                for (const productId in products) {
+                    if (products.hasOwnProperty(productId)) {
+                        const product = products[productId];
 
-                    // Filter products by category
-                    if (product.Category === category || category === 'All') {
-                        // Create a div for each product
-                        const productDiv = document.createElement('div');
+                        // Filter products by category
+                        if (product.Category === category || category === 'All') {
+                            // Create a div for each product
+                            const productDiv = document.createElement('div');
 
-                        const hotItemButtonText = product.bestSeller ? 'Remove Hot Item' : 'Hot Item';
+                            const hotItemButtonText = product.bestSeller ? 'Remove Hot Item' : 'Hot Item';
 
-                        productDiv.classList.add('prod_manage');
-						productDiv.setAttribute('data-id', productId);
-						 // productDiv.setAttribute('data-id', 'Product1')
-                        productDiv.innerHTML = `
+                            productDiv.classList.add('prod_manage');
+                            productDiv.setAttribute('data-id', productId);
+                            // productDiv.setAttribute('data-id', 'Product1')
+                            productDiv.innerHTML = `
                        	  
 							<div>
                                 <div class="prodImg">
@@ -1230,18 +1245,18 @@ function sendData(categoryInput) {
                         `;
 
 
-                        // Append the product div to the product list div
-                        productListDiv.appendChild(productDiv);
+                            // Append the product div to the product list div
+                            productListDiv.appendChild(productDiv);
 
-                        const detailsButton = productDiv.querySelector('.detBtn');
-                        const detailsElement = productDiv.querySelector('details');
+                            const detailsButton = productDiv.querySelector('.detBtn');
+                            const detailsElement = productDiv.querySelector('details');
 
-                        detailsButton.addEventListener('click', () => {
-                            // Show the product details div
-                            productDetailsDiv.style.display = 'block';
+                            detailsButton.addEventListener('click', () => {
+                                // Show the product details div
+                                productDetailsDiv.style.display = 'block';
 
-                            // Update the product details div with product information
-                            productDetailsDiv.innerHTML = `
+                                // Update the product details div with product information
+                                productDetailsDiv.innerHTML = `
                                 <h4>${product.ProductName}</h4>
 
                                 <p>Category: ${product.Category}</p>
@@ -1251,239 +1266,325 @@ function sendData(categoryInput) {
                                 <button class="closeBtn">Close</button>
                             `;
 
-                            detailsElement.removeAttribute('open');
+                                detailsElement.removeAttribute('open');
 
-                            const closeButton = productDetailsDiv.querySelector('.closeBtn');
-                            closeButton.addEventListener('click', () => {
-                                productDetailsDiv.style.display = 'none';
+                                const closeButton = productDetailsDiv.querySelector('.closeBtn');
+                                closeButton.addEventListener('click', () => {
+                                    productDetailsDiv.style.display = 'none';
+                                });
                             });
-                        });
-                    
-                        const hotItemButton = productDiv.querySelector('.hotItemBtn');
-                        hotItemButton.addEventListener('click', () => {
-                            const isBestSeller = product.bestSeller || false;
 
-                            Swal.fire({
-                                title: 'Are you sure?',
-                                text: `Do you want to ${isBestSeller ? 'remove this product from' : 'set this product as'} Best Seller?`,
-                                icon: 'warning',
-                                showCancelButton: true,
-                                confirmButtonColor: '#3085d6',
-                                cancelButtonColor: '#d33',
-                                confirmButtonText: isBestSeller ? 'Yes, remove it!' : 'Yes, set it!'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    // Toggle the bestSeller status
-                                    productsRef.child(productId).update({
-                                        bestSeller: !isBestSeller
-                                    }).then(() => {
-                                        Swal.fire(
-                                            'Updated!',
-                                            `The product has been ${!isBestSeller ? 'marked as a Best Seller' : 'removed from Best Sellers'}.`,
-                                            'success'
-                                        );
-                                        // Update the button text after changing the status
-                                        hotItemButton.textContent = !isBestSeller ? 'Remove Hot Item' : 'Hot Item';
-                                    });
+                            const hotItemButton = productDiv.querySelector('.hotItemBtn');
+                            hotItemButton.addEventListener('click', () => {
+                                const isBestSeller = product.bestSeller || false;
+
+                                Swal.fire({
+                                    title: 'Are you sure?',
+                                    text: `Do you want to ${isBestSeller ? 'remove this product from' : 'set this product as'} Best Seller?`,
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonColor: '#3085d6',
+                                    cancelButtonColor: '#d33',
+                                    confirmButtonText: isBestSeller ? 'Yes, remove it!' : 'Yes, set it!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        // Toggle the bestSeller status
+                                        productsRef.child(productId).update({
+                                            bestSeller: !isBestSeller
+                                        }).then(() => {
+                                            Swal.fire(
+                                                'Updated!',
+                                                `The product has been ${!isBestSeller ? 'marked as a Best Seller' : 'removed from Best Sellers'}.`,
+                                                'success'
+                                            );
+                                            // Update the button text after changing the status
+                                            hotItemButton.textContent = !isBestSeller ? 'Remove Hot Item' : 'Hot Item';
+                                        });
+                                    }
+                                });
+                            });
+                        }
+                    }
+                }
+            }
+
+            // Add event listeners to sidebar items
+            const categoryFilters = document.querySelectorAll('.category-filter');
+            categoryFilters.forEach(filter => {
+                filter.addEventListener('click', () => {
+                    const category = filter.getAttribute('data-category');
+                    displayProducts(category);
+                });
+            });
+
+            // Automatically select "Milktea" category
+            const milkteaFilter = document.querySelector('.category-filter[data-category="Milktea"]');
+            if (milkteaFilter) {
+                milkteaFilter.click();
+            }
+            const searchBar = document.getElementById('productSearch');
+            searchBar.addEventListener('input', () => {
+                const searchQuery = searchBar.value.toLowerCase();
+
+                // Check if the search query matches any product names
+                let foundProduct = false;
+                for (const productId in products) {
+                    if (products.hasOwnProperty(productId)) {
+                        const product = products[productId];
+                        if (product.ProductName.toLowerCase().includes(searchQuery)) {
+                            foundProduct = true;
+                            const matchingCategory = product.Category;
+
+                            // Select the category
+                            const categoryFilter = document.querySelector(`.category-filter[data-category="${matchingCategory}"]`);
+                            if (categoryFilter) {
+                                categoryFilter.click();
+                            }
+
+                            // Highlight matching product
+                            const productDivs = document.querySelectorAll('.prod_manage');
+                            productDivs.forEach(div => {
+                                const productName = div.querySelector('.displaying').textContent.toLowerCase();
+                                if (productName.includes(searchQuery)) {
+                                    div.classList.add('highlight');
+                                    div.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                } else {
+                                    div.classList.remove('highlight');
                                 }
                             });
-                        });
-                    }
-                }
-            }
-        }
-
-        // Add event listeners to sidebar items
-        const categoryFilters = document.querySelectorAll('.category-filter');
-        categoryFilters.forEach(filter => {
-            filter.addEventListener('click', () => {
-                const category = filter.getAttribute('data-category');
-                displayProducts(category);
-            });
-        });
-
-        // Automatically select "Milktea" category
-        const milkteaFilter = document.querySelector('.category-filter[data-category="Milktea"]');
-        if (milkteaFilter) {
-            milkteaFilter.click();
-        }
-        const searchBar = document.getElementById('productSearch');
-        searchBar.addEventListener('input', () => {
-            const searchQuery = searchBar.value.toLowerCase();
-            
-            // Check if the search query matches any product names
-            let foundProduct = false;
-            for (const productId in products) {
-                if (products.hasOwnProperty(productId)) {
-                    const product = products[productId];
-                    if (product.ProductName.toLowerCase().includes(searchQuery)) {
-                        foundProduct = true;
-                        const matchingCategory = product.Category;
-
-                        // Select the category
-                        const categoryFilter = document.querySelector(`.category-filter[data-category="${matchingCategory}"]`);
-                        if (categoryFilter) {
-                            categoryFilter.click();
+                            break;
                         }
-
-                        // Highlight matching product
-                        const productDivs = document.querySelectorAll('.prod_manage');
-                        productDivs.forEach(div => {
-                            const productName = div.querySelector('.displaying').textContent.toLowerCase();
-                            if (productName.includes(searchQuery)) {
-                                div.classList.add('highlight');
-                                div.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            } else {
-                                div.classList.remove('highlight');
-                            }
-                        });
-                        break;
                     }
                 }
-            }
 
-            if (!foundProduct) {
-                displayProducts('All', searchQuery);
-            }
-            if (searchQuery === '') {
-                if (milkteaFilter) {
-                    milkteaFilter.click();
+                if (!foundProduct) {
+                    displayProducts('All', searchQuery);
                 }
-            }
-        });
-    });
-}
-
-// Function to handle the enable/disable button click
-function onToggleStatusClick(buttonElement) {
-    const productId = buttonElement.getAttribute('data-product-id'); // Get product ID
-    const productRef = database.ref('Products/' + productId);
-
-    // Retrieve the current product's status
-    productRef.once('value')
-    .then((snapshot) => {
-        const product = snapshot.val();
-        const newStatus = product.status === 'unavailable' ? 'available' : 'unavailable'; // Toggle status
-
-        // Confirm with the user before changing the status
-        Swal.fire({
-            title: "Change Product Status",
-            text: `Do you want to mark "${product.ProductName}" as ${newStatus}?`,
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: 'Yes, update it!',
-            cancelButtonText: 'No, cancel!',
-            reverseButtons: true,
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Update the product's status
-                productRef.update({
-                    status: newStatus
-                })
-                .then(() => {
-                    console.log(`Product with ID ${productId} has been updated to ${newStatus}.`);
-                    Swal.fire(
-                        'Updated!',
-                        `The product is now marked as ${newStatus}.`,
-                        'success'
-                    );
-                })
-                .catch((error) => {
-                    console.error("Error updating product status: ", error);
-                    Swal.fire(
-                        'Error!',
-                        'Failed to update the product status. Please try again.',
-                        'error'
-                    );
-                });
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                Swal.fire(
-                    'Cancelled',
-                    'No changes made!',
-                    'error'
-                );
-            }
-        });
-    })
-    .catch((error) => {
-        console.error("Error retrieving product data: ", error);
-    });
-}
-
-        
-function fetchOrdersAndCalculateTotal() {
-    const ordersRef = firebase.database().ref('Orders');
-    let overallTotal = 0; // Variable to hold overall total
-
-  
-
-    // Set up a new listener
-    ordersRef.on('value', (snapshot) => {
-        overallTotal = 0; // Reset the overall total for fresh calculation
-        snapshot.forEach((customerSnapshot) => {
-            customerSnapshot.forEach((orderSnapshot) => {
-                const orderData = orderSnapshot.val();
-                if (orderData) {
-                    if (orderData.status === 'delivered' || orderData.status === 'history') {
-                        const totalStr = orderData.total.replace("₱", "").replace(",", "").trim(); // Remove currency symbol and commas
-                        const total = parseFloat(totalStr); // Convert to float
-                        overallTotal += total; // Add to overall total
+                if (searchQuery === '') {
+                    if (milkteaFilter) {
+                        milkteaFilter.click();
                     }
                 }
             });
         });
-
-        // Update the UI with the overall total
-        updateTotalDisplay(overallTotal);
-    });
-}
-
-// Function to update the total display in the UI
-function updateTotalDisplay(total) {
-    const dailyProfitElement = document.querySelector('.totalProfit'); // Ensure the correct class name
-    dailyProfitElement.textContent = `₱ ${total.toLocaleString()}`; // Format and set the total with currency symbol
-}
-
-// Call the function to fetch orders and calculate total
-
-        window.onload = function() {
-    		fetchAndDisplayUsers();
-    		manageCustomerDisplay();
-    		manageProductDisplay();
-    		fetchOrdersAndCalculateTotal();
-	};
-
-
-// Function to handle form cancel
-function handleCancel() {
-
-
-    // Hide the form overlay
-    const formElement = document.getElementById('editProductsOverlay');
-    if (formElement) {
-        formElement.style.display = 'none';
     }
-}
+
+    // Function to handle the enable/disable button click
+    function onToggleStatusClick(buttonElement) {
+        const productId = buttonElement.getAttribute('data-product-id'); // Get product ID
+        const productRef = database.ref('Products/' + productId);
+
+        // Retrieve the current product's status
+        productRef.once('value')
+            .then((snapshot) => {
+                const product = snapshot.val();
+                const newStatus = product.status === 'unavailable' ? 'available' : 'unavailable'; // Toggle status
+
+                // Confirm with the user before changing the status
+                Swal.fire({
+                    title: "Change Product Status",
+                    text: `Do you want to mark "${product.ProductName}" as ${newStatus}?`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, update it!',
+                    cancelButtonText: 'No, cancel!',
+                    reverseButtons: true,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Update the product's status
+                        productRef.update({
+                            status: newStatus
+                        })
+                            .then(() => {
+                                console.log(`Product with ID ${productId} has been updated to ${newStatus}.`);
+                                Swal.fire(
+                                    'Updated!',
+                                    `The product is now marked as ${newStatus}.`,
+                                    'success'
+                                );
+                            })
+                            .catch((error) => {
+                                console.error("Error updating product status: ", error);
+                                Swal.fire(
+                                    'Error!',
+                                    'Failed to update the product status. Please try again.',
+                                    'error'
+                                );
+                            });
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        Swal.fire(
+                            'Cancelled',
+                            'No changes made!',
+                            'error'
+                        );
+                    }
+                });
+            })
+            .catch((error) => {
+                console.error("Error retrieving product data: ", error);
+            });
+    }
 
 
-// Add event listener to the Cancel button
-document.getElementById('cancel').addEventListener('click', hideForm);
+    function fetchOrdersAndCalculateTotal() {
+        const ordersRef = firebase.database().ref('Orders');
+        let overallTotal = 0; // Variable to hold overall total
 
 
 
+        // Set up a new listener
+        ordersRef.on('value', (snapshot) => {
+            overallTotal = 0; // Reset the overall total for fresh calculation
+            snapshot.forEach((customerSnapshot) => {
+                customerSnapshot.forEach((orderSnapshot) => {
+                    const orderData = orderSnapshot.val();
+                    if (orderData) {
+                        if (orderData.status === 'delivered' || orderData.status === 'history') {
+                            const totalStr = orderData.total.replace("₱", "").replace(",", "").trim(); // Remove currency symbol and commas
+                            const total = parseFloat(totalStr); // Convert to float
+                            overallTotal += total; // Add to overall total
+                        }
+                    }
+                });
+            });
 
-  
-function onEditButtonClick(element) {
-    const productId = element.getAttribute('data-product-id'); // Get productId from the data attribute
-    const productRef = database.ref(`Products/${productId}`);
-    productRef.once('value').then((snapshot) => {
-        const product = snapshot.val();
+            // Update the UI with the overall total
+            updateTotalDisplay(overallTotal);
+        });
+    }
 
-        // Create the edit form template
-        const editFormTemplate = `
-			<form id="editProductForm">
+    // Function to update the total display in the UI
+    function updateTotalDisplay(total) {
+        const dailyProfitElement = document.querySelector('.totalProfit'); // Ensure the correct class name
+        dailyProfitElement.textContent = `₱ ${total.toLocaleString()}`; // Format and set the total with currency symbol
+    }
+
+    // Call the function to fetch orders and calculate total
+
+    window.onload = function () {
+        fetchAndDisplayUsers();
+        manageCustomerDisplay();
+        manageProductDisplay();
+        fetchOrdersAndCalculateTotal();
+    };
+
+
+    // Function to handle form cancel
+    function handleCancel() {
+
+
+        // Hide the form overlay
+        const formElement = document.getElementById('editProductsOverlay');
+        if (formElement) {
+            formElement.style.display = 'none';
+        }
+    }
+
+
+    // Add event listener to the Cancel button
+    // document.getElementById('cancel').addEventListener('click', hideForm);
+
+    function showAddStaffForm() {
+        // Create the HTML for the SweetAlert content
+        const staffFormHTML = `
+        <div > 
+
+                <div>
+                    <h2>Add Staff</h2>
+                </div>
+                <div class="productsHolder">
+                    <div class="txtborder Name">
+                        <p>Staff Name*</p>
+                        <input type="text" id="staffName" required>
+                    </div>
+
+                    <div class="txtborder Category">
+                        <p>Gender*</p>
+                        <select id="staffGender">
+                            <option>Male</option>
+                            <option>Female</option>
+                        </select>
+                    </div>
+
+                    <div class="txtborder Category">
+                        <p>Phone Number*</p>
+                        <input type="number" id="staffNumber" required maxlength="11" pattern="\d*" oninput="this.value = this.value.slice(0, 11);">
+
+                    </div>
+
+                    <div class="txtborder Name">
+                        <p>Gmail*</p>
+                        <input type="email" id="staffGmail" required>
+                    </div>
+
+                    <div class="txtborder Name">
+                        <p>Address*</p>
+                        <input type="text" id="staffAddress" required>
+                    </div>
+
+                    <div class="txtborder Name">
+                        <p>Position*</p>
+                        <input type="text" id="staffPosition" required>
+                    </div>
+
+                    <div class="txtborder Name">
+                        <p>Username*</p>
+                        <input type="text" id="staffUsername" required>
+                    </div>
+
+                    <div class="txtborder Name">
+                        <p>Password*</p>
+                        <input type="text" id="staffPass" required>
+                    </div>
+
+                    <div class="txtborder Price">
+                        <div class="file_holder">
+                            <p>Upload Image*</p>
+                            <input type="file" name="" id="staffImage">
+                        </div>
+                    </div>
+                </div>
+                <div class="button_holder">
+                    <div>
+                        <button type="button" class="cancelBtn" onclick="Swal.close()">Cancel</button>
+                    </div>
+                    <div>
+                        <button type="button" id="confirm" onclick="sendStaff()">Confirm</button>
+                    </div>
+                </div>
+     
+        </div>
+    `;
+
+        // Use SweetAlert to display the form
+        Swal.fire({
+            html: staffFormHTML,
+            showCloseButton: true,
+            showConfirmButton: false,
+            width: '70%',
+            focusConfirm: false,
+            onOpen: () => {
+                // Optionally set focus to the first input field
+                document.getElementById('staffName').focus();
+            }
+        });
+    }
+
+
+
+    function onEditButtonClick(element) {
+        const productId = element.getAttribute('data-product-id'); // Get productId from the data attribute
+        const productRef = database.ref(`Products/${productId}`);
+        productRef.once('value').then((snapshot) => {
+            const product = snapshot.val();
+
+            // Create the edit form template
+            const editFormTemplate = `
+			<form id="EditProductForm">
+            <input type="hidden" id="editProductId" value="${productId}">
+
     			<div>
-        			<h2>Add Products</h2>
+        			<h2>Edit Products</h2>
     			</div>
     			<div class="productsHolder">
     				<div class="txtborder Name">
@@ -1535,11 +1636,8 @@ function onEditButtonClick(element) {
     				<div class="txtborder">
     					<p>Product Price*</p>
     					<div id="holderSize">
-        					<div>
-        						
-
+        					<div>        						
 								<input type="text" id="size1">
-
         					</div>
         					<div>
         						<input type="number" id="editProductPrice" name="" placeholder="Enter Price" required oninput="limitDigits(this)">
@@ -1576,159 +1674,209 @@ function onEditButtonClick(element) {
     			</div>
     			<div class="button_holder">
         			<div>
-        				<button id="cancel" class="cancelBtn" onclick="hideProd()">Cancel</button>
-        			</div>
-        			<div>
     					<button type="button" id="confirm" onclick="editProd()">Confirm</button>
     				</div>
     			</div>  
 			</form>
         `;
 
-        // Show SweetAlert with the edit form
-        Swal.fire({
-            html: editFormTemplate,
-            showCloseButton: true,
-            showCancelButton: false,
-            showConfirmButton: false, // Hide the OK button
-            focusConfirm: false,
-            width: '70%',
-            didOpen: () => {
-                // Populate the fields with product data
-                document.getElementById('editProductName').value = product.ProductName;
-        		document.getElementById('editProductPrice').value = product.Price;
+            // Show SweetAlert with the edit form
+            Swal.fire({
+                html: editFormTemplate,
+                showCloseButton: true,
+                showCancelButton: false,
+                showConfirmButton: false, // Hide the OK button
+                focusConfirm: false,
+                width: '70%',
+                didOpen: () => {
+                    // Populate the fields with product data
+                    document.getElementById('editProductName').value = product.ProductName;
+                    document.getElementById('editProductPrice').value = product.Price;
 
-const sizeInput = document.getElementById('size1');
-const priceField = document.getElementById('editProductPrice');
+                    const sizeInput = document.getElementById('size1');
+                    const priceField = document.getElementById('editProductPrice');
 
-// Log the product data to ensure it has the expected structure
-console.log("Product data:", product);
+                    // Log the product data to ensure it has the expected structure
+                    console.log("Product data:", product);
 
-if (product.Small) {
-    console.log("Setting size to Small and price to", product.Small);
-    sizeInput.value = 'Small'; // Set the size to Small
-    priceField.value = product.Small; // Set the price to Small's value
-} 
-else if (product.Large) {
-    console.log("Setting size to Large and price to", product.Large);
-    sizeInput.value = 'Large'; // Set the size to Large
-    priceField.value = product.Large; // Set the price to Large's value
-} 
-else if (product.Regular) {
-    console.log("Setting size to Regular and price to", product.Regular);
-    sizeInput.value = 'Regular'; // Set the size to Regular
-    priceField.value = product.Regular; // Set the price to Regular's value
-} else {
-    console.log("No valid size found in product data.");
-}
-
-
+                    if (product.Small) {
+                        console.log("Setting size to Small and price to", product.Small);
+                        sizeInput.value = 'Small'; // Set the size to Small
+                        priceField.value = product.Small; // Set the price to Small's value
+                    }
+                    else if (product.Large) {
+                        console.log("Setting size to Large and price to", product.Large);
+                        sizeInput.value = 'Large'; // Set the size to Large
+                        priceField.value = product.Large; // Set the price to Large's value
+                    }
+                    else if (product.Regular) {
+                        console.log("Setting size to Regular and price to", product.Regular);
+                        sizeInput.value = 'Regular'; // Set the size to Regular
+                        priceField.value = product.Regular; // Set the price to Regular's value
+                    } else {
+                        console.log("No valid size found in product data.");
+                    }
 
 
 
-        		// Populate flavor fields if they exist
-        		if (product.Flavor1) document.getElementById('editProductFlavor1').value = product.Flavor1;
-        		if (product.Flavor2) {
-            		document.getElementById('editProductFlavor2').value = product.Flavor2;
-            		document.getElementById('another_flavor1').style.display = 'block';
-        		}
-        		if (product.Flavor3) {
-            		document.getElementById('editProductFlavor3').value = product.Flavor3;
-            		document.getElementById('another_flavor2').style.display = 'block';
-        		}
-        		if (product.Flavor4) {
-            		document.getElementById('editProductFlavor4').value = product.Flavor4;
-            		document.getElementById('another_flavor3').style.display = 'block';
-        		}
-        		if (product.Flavor5) {
-            		document.getElementById('editProductFlavor5').value = product.Flavor5;
-            		document.getElementById('another_flavor4').style.display = 'block';
-        		}
-        		// Set the selected category if applicable
-        		document.getElementById('editCategorySelect').value = product.Category;
-            		}
-        		});
-    		}).catch((error) => {
-        		console.error('Error retrieving product data:', error);
-    		});
-	}		
 
-function editProd(productId) {
+
+                    // Populate flavor fields if they exist
+                    if (product.Flavor1) document.getElementById('editProductFlavor1').value = product.Flavor1;
+                    if (product.Flavor2) {
+                        document.getElementById('editProductFlavor2').value = product.Flavor2;
+                        document.getElementById('another_flavor1').style.display = 'block';
+                    }
+                    if (product.Flavor3) {
+                        document.getElementById('editProductFlavor3').value = product.Flavor3;
+                        document.getElementById('another_flavor2').style.display = 'block';
+                    }
+                    if (product.Flavor4) {
+                        document.getElementById('editProductFlavor4').value = product.Flavor4;
+                        document.getElementById('another_flavor3').style.display = 'block';
+                    }
+                    if (product.Flavor5) {
+                        document.getElementById('editProductFlavor5').value = product.Flavor5;
+                        document.getElementById('another_flavor4').style.display = 'block';
+                    }
+                    // Set the selected category if applicable
+                    document.getElementById('editCategorySelect').value = product.Category;
+                }
+            });
+        }).catch((error) => {
+            console.error('Error retrieving product data:', error);
+        });
+    }
+
+function editProd() {
+    const productId = document.getElementById('editProductId').value;
+    const productRef = database.ref('Products/' + productId);
+
     const productName = document.getElementById('editProductName').value;
     const productPrice = document.getElementById('editProductPrice').value;
-    const productFlavor1 = document.getElementById('editProductFlavor1').value;
-    const productFlavor2 = document.getElementById('editProductFlavor2').value;
-    const productFlavor3 = document.getElementById('editProductFlavor3').value;
-    const productFlavor4 = document.getElementById('editProductFlavor4').value;
-    const productFlavor5 = document.getElementById('editProductFlavor5').value;
     const category = document.getElementById('editCategorySelect').value;
 
-    const productRef = database.ref(`Products/${productId}`);
-    productRef.update({
+    const productFlavor1 = document.getElementById('editProductFlavor1').value || null;
+    const productFlavor2 = document.getElementById('editProductFlavor2')?.value || null;
+    const productFlavor3 = document.getElementById('editProductFlavor3')?.value || null;
+    const productFlavor4 = document.getElementById('editProductFlavor4')?.value || null;
+    const productFlavor5 = document.getElementById('editProductFlavor5')?.value || null;
+
+    const imageFile = document.getElementById('img').files[0];
+    const qrCodeFile = document.getElementById('QrCodeIMG').files[0];
+
+    const updates = {
         ProductName: productName,
         Price: productPrice,
+        Category: category,
         Flavor1: productFlavor1,
         Flavor2: productFlavor2,
         Flavor3: productFlavor3,
         Flavor4: productFlavor4,
         Flavor5: productFlavor5,
-        Category: category,
-        // Include other fields as necessary
-    }).then(() => {
-        Swal.fire('Product updated successfully!', '', 'success');
-        // Optionally refresh the product list or close the modal
-    }).catch((error) => {
-        console.error('Error updating product:', error);
-        Swal.fire('Error updating product', '', 'error');
+    };
+
+    const uploadTasks = [];
+
+    // Upload image if selected
+    if (imageFile) {
+        const storageRef = firebase.storage().ref('ProductImages/' + productId + '/' + imageFile.name);
+        const uploadTask = storageRef.put(imageFile).then(snapshot =>
+            snapshot.ref.getDownloadURL().then(url => {
+                updates.ImageURL = url;
+            })
+        );
+        uploadTasks.push(uploadTask);
+    }
+
+    // Upload QR code image if selected
+    if (qrCodeFile) {
+        const qrStorageRef = firebase.storage().ref('ProductQRCodes/' + productId + '/' + qrCodeFile.name);
+        const uploadQRTask = qrStorageRef.put(qrCodeFile).then(snapshot =>
+            snapshot.ref.getDownloadURL().then(url => {
+                updates.QRImageURL = url;
+            })
+        );
+        uploadTasks.push(uploadQRTask);
+    }
+
+    // Once all uploads are done, update the database
+    Promise.all(uploadTasks).then(() => {
+        productRef.update(updates).then(() => {
+            Swal.fire('Product updated successfully!', '', 'success');
+        }).catch((error) => {
+            console.error('Error updating product:', error);
+            Swal.fire('Error updating product', '', 'error');
+        });
     });
 }
 
 
 
-// Reference to the "Products" node in Firebase
-const productsRef = firebase.database().ref('Products');
-
-// Function to update the count
-function updateProductCount() {
-    productsRef.once('value', (snapshot) => {
-        // Get the count of child nodes under "Products"
-        const productCount = snapshot.numChildren();
-
-        // Update the HTML with the product count
-         document.querySelector('.prodNum').innerText = productCount;
-    });
-}
-
-// Call the function initially to set the initial count
-updateProductCount();
-
-// Listen for changes in the "Products" node and update the count accordingly
-productsRef.on('child_added', updateProductCount);
-productsRef.on('child_removed', updateProductCount);
 
 
-// code for displaying registered customer
-const customerRef = firebase.database().ref('Users');
-function updateRegCustomer() {
-    customerRef.once('value', (snapshot) => {
-        // Get the count of child nodes under "Products"
-        const productCount = snapshot.numChildren();
+    // Reference to the "Products" node in Firebase
+    const productsRef = firebase.database().ref('Products');
 
-        // Update the HTML with the product count
-         document.querySelector('.custNum').innerText = productCount;
-    });
-}
+    // Function to update the count
+    function updateProductCount() {
+        productsRef.once('value', (snapshot) => {
+            // Get the count of child nodes under "Products"
+            const productCount = snapshot.numChildren();
 
-// Call the function initially to set the initial count
-updateRegCustomer();
+            // Update the HTML with the product count
+            document.querySelector('.prodNum').innerText = productCount;
+        });
+    }
 
-// Listen for changes in the "Products" node and update the count accordingly
-customerRef.on('child_added', updateRegCustomer);
-customerRef.on('child_removed', updateRegCustomer);
+    // Call the function initially to set the initial count
+    updateProductCount();
+
+    // Listen for changes in the "Products" node and update the count accordingly
+    productsRef.on('child_added', updateProductCount);
+    productsRef.on('child_removed', updateProductCount);
+
+
+    // code for displaying registered customer
+    const customerRef = firebase.database().ref('Users');
+    function updateRegCustomer() {
+        customerRef.once('value', (snapshot) => {
+            // Get the count of child nodes under "Products"
+            const productCount = snapshot.numChildren();
+
+            // Update the HTML with the product count
+            document.querySelector('.custNum').innerText = productCount;
+        });
+    }
+
+
+    // Call the function initially to set the initial count
+    updateRegCustomer();
+
+    // Listen for changes in the "Products" node and update the count accordingly
+    customerRef.on('child_added', updateRegCustomer);
+    customerRef.on('child_removed', updateRegCustomer);
+
+
+    const staffRef = firebase.database().ref('Staff');
+    function updateRegStaff() {
+        staffRef.once('value', (snapshot) => { // Use staffRef here
+            // Get the count of child nodes under "Staff"
+            const staffCount = snapshot.numChildren(); // Use a unique variable for staff count
+
+            // Update the HTML with the staff count
+            document.querySelector('.staffNum').innerText = staffCount; // Update the correct element
+        });
+    }
+
+    // Call the function initially to set the initial count
+    updateRegStaff();
+
+    // Listen for changes in the "Staff" node and update the count accordingly
+    staffRef.on('child_added', updateRegStaff);
+    staffRef.on('child_removed', updateRegStaff);
 
 
 </script>
 <script src="js/donut.js"></script>
-<script src="js/allOrders.js"></script>
-<script src="js/displayStaff.js"></script>
 </html>
