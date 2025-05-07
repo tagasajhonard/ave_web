@@ -1,7 +1,7 @@
-document.getElementById("dateTimeForm").addEventListener("submit", function (e) {
-        e.preventDefault(); // Prevent the default form submission behavior
-        sendData();
-    });
+// document.getElementById("dateTimeForm").addEventListener("submit", function (e) {
+//         e.preventDefault(); // Prevent the default form submission behavior
+//         sendData();
+//     });
 	 function showForm() {
         var form = document.getElementById('dateTimeForm');
         var overlay = document.getElementById('overlay');

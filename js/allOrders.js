@@ -265,10 +265,6 @@ function displayOrders(orders) {
         }
     }
 } 
-    
-
-
-
 
 
 function displayAcceptedOrders(orders) {

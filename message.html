@@ -412,9 +412,10 @@ function displayUsersFromFirebase() {
 function renderUsers(users) {
     usersContainer.innerHTML = '';
     users.forEach(user => {
-        addUserToDisplay(user.userKey, user.fullName);
+        addUserToDisplay(user.userKey, user.fullName, user.latestMessage); 
     });
 }
+
 
 
 
@@ -468,7 +469,7 @@ function addUserToDisplay(userKey, fullName, latestMessage = '') {
     // Create a new element to display the latest message below the user's name
     const messageDiv = document.createElement('p');
     messageDiv.classList.add('latest-message');
-    messageDiv.textContent = latestMessage ? `Latest message: ${latestMessage}` : 'No messages yet';
+    messageDiv.textContent = latestMessage ? `${latestMessage}` : 'No messages yet';
     userDiv.appendChild(messageDiv); // Add the message element under the user's name
 
     // Use fullName for message display and updating the full name field

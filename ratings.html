@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Ratings Overview</title>
+  <style>
+  	    @font-face {
+        font-family: 'Poppins-Regular';
+        src: url('font/Poppins-Regular.ttf') format('truetype');
+        }
+    *{
+		box-sizing: border-box;
+		padding: 0;
+		margin: 0;
+		font-family: 'Poppins-Regular', sans-serif;
+	}
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .product-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .product-card {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+      cursor: pointer;
+    }
+
+    .product-card:hover {
+      transform: scale(1.02);
+    }
+
+    .product-name {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #444;
+      margin-bottom: 10px;
+    }
+
+    .rating-info {
+      color: #777;
+      font-size: 0.95em;
+    }
+
+    .badge {
+      background: #4caf50;
+      color: white;
+      border-radius: 12px;
+      padding: 2px 10px;
+      font-size: 0.8em;
+      margin-left: 5px;
+    }
+
+     .rating-summary p {
+    margin: 4px 0;
+    font-size: 14px;
+  }
+  </style>
+</head>
+<body>
+  <a href="dashboard.html" class="back-button">← Back to Dashboard</a>
+  <h1>📊 Product Ratings Overview</h1>
+
+  <div class="product-list" id="productList">
+    <!-- Dynamic content here -->
+  </div>
+
+  <!-- Firebase & Script -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+ <script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCMTIQkR66Zz-ENPofBTkuxg-J1oRpaCf4",
+    authDomain: "avenue-t-house.firebaseapp.com",
+    databaseURL: "https://avenue-t-house-default-rtdb.firebaseio.com",
+    projectId: "avenue-t-house",
+    storageBucket: "avenue-t-house.appspot.com",
+    messagingSenderId: "928838424164",
+    appId: "1:928838424164:web:2c289e01a7744d8df57171",
+    measurementId: "G-GMMWS6J7ED"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  const productList = document.getElementById('productList');
+  const productRatingsMap = {};
+
+  db.ref('Ratings').once('value').then(snapshot => {
+    snapshot.forEach(customerSnap => {
+      customerSnap.forEach(ratingSnap => {
+        const rating = ratingSnap.val();
+        const product = rating.productName;
+
+        if (!productRatingsMap[product]) {
+          productRatingsMap[product] = [];
+        }
+
+        productRatingsMap[product].push(rating);
+      });
+    });
+
+    // Render product cards with summary
+    for (const product in productRatingsMap) {
+      const ratings = productRatingsMap[product];
+      let tasteTotal = 0, qualityTotal = 0, serviceTotal = 0, deliveryTotal = 0;
+
+      ratings.forEach(rating => {
+        tasteTotal += rating.tasteRating || 0;
+        qualityTotal += rating.qualityRating || 0;
+        serviceTotal += rating.serviceRating || 0;
+        deliveryTotal += rating.deliveryRating || 0;
+      });
+
+      const totalRatings = ratings.length;
+      const avgTaste = (tasteTotal / totalRatings).toFixed(1);
+      const avgQuality = (qualityTotal / totalRatings).toFixed(1);
+      const avgService = (serviceTotal / totalRatings).toFixed(1);
+      const avgDelivery = (deliveryTotal / totalRatings).toFixed(1);
+
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.addEventListener('click', () => {
+        const encodedName = encodeURIComponent(product);
+        window.location.href = `ratings_detail.html?product=${encodedName}`;
+      });
+
+      card.innerHTML = `
+        <h3>${product}</h3>
+        <p>Total Ratings: ${totalRatings}</p>
+        <div class="rating-summary">
+          <p>Taste: ${avgTaste} ⭐</p>
+          <p>Quality: ${avgQuality} ⭐</p>
+          <p>Service: ${avgService} ⭐</p>
+          <p>Delivery: ${avgDelivery} ⭐</p>
+        </div>
+      `;
+
+      productList.appendChild(card);
+    }
+  });
+</script>
+
+</body>
+</html>
