@@ -112,10 +112,10 @@ function updateOptions() {
 
     // added products
 
-    document.getElementById("products").addEventListener("submit", function (e) {
-        e.preventDefault(); // Prevent the default form submission behavior
-        sendData();
-    });
+    // document.getElementById("products").addEventListener("submit", function (e) {
+    //     e.preventDefault(); // Prevent the default form submission behavior
+    //     sendData();
+    // });
 	 function showProd() {
         var form = document.getElementById('products');
         var overlay = document.getElementById('overlay');

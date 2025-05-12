@@ -260,10 +260,10 @@
         width: 260px;
         height: 260px;
     }
-    #dougnutChart{
+/*    #dougnutChart{
         border-radius: 10px;
         box-shadow: 2px 2px 12px gray;
-    }
+    }*/
     #barChart{
         margin-top: 10px;
         border-radius: 10px;

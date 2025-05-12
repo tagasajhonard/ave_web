@@ -1,21 +1,31 @@
-const refer = firebase.database().ref('TopSelling');
-refer.once('value').then((snapshot) => {
+const refer = firebase.database().ref('BestSeller');
+refer.on('value', (snapshot) => {
   const topSellingData = snapshot.val();
+  if (!topSellingData) return;
 
-  // Extract labels and data from Firebase object
-  const labels = Object.keys(topSellingData);
-  const data = Object.values(topSellingData);
+  // Convert object to array and sort by quantity descending
+  const sortedItems = Object.entries(topSellingData)
+    .sort(([, a], [, b]) => b.quantity - a.quantity)
+    .slice(0, 5); // Get top 5 items
+
+  const labels = sortedItems.map(([key]) => key);
+  const data = sortedItems.map(([, value]) => value.quantity);
+
+  // Destroy old chart if it exists
+  if (window.doughnutChart) {
+    window.doughnutChart.destroy();
+  }
 
   const ctxDoughnut = document.getElementById('dougnutChart').getContext('2d');
 
-  const doughnutChart = new Chart(ctxDoughnut, {
+  window.doughnutChart = new Chart(ctxDoughnut, {
     type: 'doughnut',
     data: {
-      labels: labels, // Use truncated labels for display on the chart
+      labels: labels,
       datasets: [{
         label: 'Sales Summary',
-        data: data, // Use data from Firebase
-        backgroundColor: ['#36A2EB', '#FF6384', '#FF9F40', '#FFCE56', '#4BC0C0', '#9966FF'], // You can adjust this as needed
+        data: data,
+        backgroundColor: ['#36A2EB', '#FF6384', '#FF9F40', '#FFCE56', '#4BC0C0', '#9966FF'],
         borderWidth: 1
       }]
     },
@@ -24,29 +34,17 @@ refer.once('value').then((snapshot) => {
         legend: {
           labels: {
             font: {
-              family: 'Poppins-Regular', // Apply your custom font to legend labels
+              family: 'Poppins-Regular',
               size: 10
-            }
-          }
-        },
-     
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            font: {
-              family: 'Poppins-Regular', // Apply font to y-axis labels
-              size: 12
             }
           }
         }
       },
       title: {
         display: true,
-        text: 'Top Selling Products',
+        text: 'Top 5 Selling Products',
         font: {
-          family: 'Poppins-Regular', // Font for chart title
+          family: 'Poppins-Regular',
           size: 18
         }
       }

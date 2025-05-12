@@ -165,32 +165,60 @@ function displayShipOrders(orders) {
                         denyButton: 'order-3',
                     },
                 }).then((result) => {
-                    if (result.isConfirmed) {
+    if (result.isConfirmed) {
+        const receivedTime = new Date().toLocaleString();
 
-                        const receivedTime = new Date().toLocaleString();
+        for (const orderId in customerOrders) {
+            const order = customerOrders[orderId];
+            if (order.status === 'in transit') {
+                order.status = 'delivered';
+                order.receivedTime = receivedTime;
+                Swal.fire('Order confirmed!', '', 'success');
 
-                        for (const orderId in customerOrders) {
-                            const order = customerOrders[orderId];
-                            if (order.status === 'in transit') {
-                                order.status = 'delivered';
-                                order.receivedTime = receivedTime;
-                                Swal.fire('Order confirmed!', '', 'success');
+                const orderRef = firebase.database().ref(`Orders/${customer}/${orderId}`);
+                orderRef.update({
+                    status: 'delivered',
+                    receivedTime: receivedTime
+                }).then(() => {
+                    // ✅ Start: Update topSelling here
+                   order.items.forEach((item) => {
+                    const productName = item.productName;
+                    const quantity = item.quantity;
 
-                                const orderRef = firebase.database().ref(`Orders/${customer}/${orderId}`);
-                                orderRef.update({
-                                    status: 'delivered',
-                                    receivedTime: receivedTime
-                                }).then(() => {
-                                    displayOrders(orders);
-                                }).catch((error) => {
-                                    console.error('Error updating order status:', error);
-                                });
-                            }
-                        }
-                    } else {
-                        Swal.fire('Changes are not saved', '', 'info');
-                    }
+                    const topSellingRef = firebase.database().ref(`BestSeller/${productName}`);
+
+                    topSellingRef.once('value')
+                        .then((snapshot) => {
+                            const existingData = snapshot.val();
+                            const existingQuantity = existingData ? existingData.quantity : 0;
+                            const newQuantity = existingQuantity + quantity;
+
+                            return topSellingRef.update({
+                                productName: productName,
+                                quantity: newQuantity
+                            });
+                        })
+                        .then(() => {
+                            console.log("✅ BestSeller updated for:", productName);
+                        })
+                        .catch((err) => {
+                            console.error("🔥 Error updating BestSeller:", err);
+                        });
                 });
+
+                    // ✅ End: Update topSelling
+
+                    displayOrders(orders);
+                }).catch((error) => {
+                    console.error('Error updating order status:', error);
+                });
+            }
+        }
+    } else {
+        Swal.fire('Changes are not saved', '', 'info');
+    }
+});
+
             };
 
             actionButtonsDiv.appendChild(approveImage);
