@@ -18,7 +18,19 @@
     <link rel="icon" type="image/x-icon" href="image/webicon.png">
 
     <script src="js/javScript.js"></script>
-    
+
+    <script>
+        // Retrieve the authenticated staff data from sessionStorage
+        const staffData = JSON.parse(sessionStorage.getItem("authenticatedStaff"));
+
+        if (staffData) {
+            console.log(`Welcome, ${staffData.name}`);
+            // Use staffData.name or other properties as needed
+        } else {
+            // If no staff data is found, redirect to login page
+            window.location.href = "index.html"; // Adjust as necessary
+        }
+    </script>
 
     <title>Dashboard</title>
 </head>
@@ -269,7 +281,7 @@
                 </a>
 
                 <a href="#">
-                    <div class="flex">
+                    <div class="flex" id="logoutbtn">
                         <div class="li_img">
                             <img src="image/logout.png">
                         </div>
@@ -366,10 +378,10 @@
                 </div>
 
                 <div class="divide">
-                    <div class="admin_img">                 
+                    <div class="admin_img">
                         <img src="image/avenueLogo.png">
                     </div>
-                    
+
                 </div>
             </div>
 
@@ -649,7 +661,7 @@
                 <div class="prod-title">
                     <h2>Manage Products</h2>
                 </div>
-            
+
 
                 <div class="search-bar">
                     <input type="text" id="productSearch" placeholder="Search for products...">
@@ -907,27 +919,15 @@
     // const refer = firebase.database().ref('TopSelling');
 
 
-    // Retrieve the authenticated staff data from sessionStorage
-    // const staffData = JSON.parse(sessionStorage.getItem("authenticatedStaff"));
+    document.getElementById("logoutbtn").addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent form submission, if inside a form
 
-    // if (staffData) {
-    //     console.log(`Welcome, ${staffData.name}`);
-    //     // Use staffData.name or other properties as needed
-    // } else {
-    //     // If no staff data is found, redirect to login page
-    //     window.location.href = "adminlogin.html"; // Adjust as necessary
-    // }
+        // Remove user session data
+        sessionStorage.removeItem("authenticatedStaff");
 
-
-    // document.getElementById("logoutbtn").addEventListener("click", function(event) {
-    //     event.preventDefault(); // Prevent form submission, if inside a form
-
-    //     // Remove user session data
-    //     sessionStorage.removeItem("authenticatedStaff");
-
-    //     // Redirect to login page
-    //     window.location.href = "adminlogin.html"; // Adjust path as needed
-    // });
+        // Redirect to login page
+        window.location.href = "index.html"; // Adjust path as needed
+    });
 
 
 
@@ -1741,68 +1741,68 @@
         });
     }
 
-function editProd() {
-    const productId = document.getElementById('editProductId').value;
-    const productRef = database.ref('Products/' + productId);
+    function editProd() {
+        const productId = document.getElementById('editProductId').value;
+        const productRef = database.ref('Products/' + productId);
 
-    const productName = document.getElementById('editProductName').value;
-    const productPrice = document.getElementById('editProductPrice').value;
-    const category = document.getElementById('editCategorySelect').value;
+        const productName = document.getElementById('editProductName').value;
+        const productPrice = document.getElementById('editProductPrice').value;
+        const category = document.getElementById('editCategorySelect').value;
 
-    const productFlavor1 = document.getElementById('editProductFlavor1').value || null;
-    const productFlavor2 = document.getElementById('editProductFlavor2')?.value || null;
-    const productFlavor3 = document.getElementById('editProductFlavor3')?.value || null;
-    const productFlavor4 = document.getElementById('editProductFlavor4')?.value || null;
-    const productFlavor5 = document.getElementById('editProductFlavor5')?.value || null;
+        const productFlavor1 = document.getElementById('editProductFlavor1').value || null;
+        const productFlavor2 = document.getElementById('editProductFlavor2')?.value || null;
+        const productFlavor3 = document.getElementById('editProductFlavor3')?.value || null;
+        const productFlavor4 = document.getElementById('editProductFlavor4')?.value || null;
+        const productFlavor5 = document.getElementById('editProductFlavor5')?.value || null;
 
-    const imageFile = document.getElementById('img').files[0];
-    const qrCodeFile = document.getElementById('QrCodeIMG').files[0];
+        const imageFile = document.getElementById('img').files[0];
+        const qrCodeFile = document.getElementById('QrCodeIMG').files[0];
 
-    const updates = {
-        ProductName: productName,
-        Price: productPrice,
-        Category: category,
-        Flavor1: productFlavor1,
-        Flavor2: productFlavor2,
-        Flavor3: productFlavor3,
-        Flavor4: productFlavor4,
-        Flavor5: productFlavor5,
-    };
+        const updates = {
+            ProductName: productName,
+            Price: productPrice,
+            Category: category,
+            Flavor1: productFlavor1,
+            Flavor2: productFlavor2,
+            Flavor3: productFlavor3,
+            Flavor4: productFlavor4,
+            Flavor5: productFlavor5,
+        };
 
-    const uploadTasks = [];
+        const uploadTasks = [];
 
-    // Upload image if selected
-    if (imageFile) {
-        const storageRef = firebase.storage().ref('ProductImages/' + productId + '/' + imageFile.name);
-        const uploadTask = storageRef.put(imageFile).then(snapshot =>
-            snapshot.ref.getDownloadURL().then(url => {
-                updates.ImageURL = url;
-            })
-        );
-        uploadTasks.push(uploadTask);
-    }
+        // Upload image if selected
+        if (imageFile) {
+            const storageRef = firebase.storage().ref('ProductImages/' + productId + '/' + imageFile.name);
+            const uploadTask = storageRef.put(imageFile).then(snapshot =>
+                snapshot.ref.getDownloadURL().then(url => {
+                    updates.ImageURL = url;
+                })
+            );
+            uploadTasks.push(uploadTask);
+        }
 
-    // Upload QR code image if selected
-    if (qrCodeFile) {
-        const qrStorageRef = firebase.storage().ref('ProductQRCodes/' + productId + '/' + qrCodeFile.name);
-        const uploadQRTask = qrStorageRef.put(qrCodeFile).then(snapshot =>
-            snapshot.ref.getDownloadURL().then(url => {
-                updates.QRImageURL = url;
-            })
-        );
-        uploadTasks.push(uploadQRTask);
-    }
+        // Upload QR code image if selected
+        if (qrCodeFile) {
+            const qrStorageRef = firebase.storage().ref('ProductQRCodes/' + productId + '/' + qrCodeFile.name);
+            const uploadQRTask = qrStorageRef.put(qrCodeFile).then(snapshot =>
+                snapshot.ref.getDownloadURL().then(url => {
+                    updates.QRImageURL = url;
+                })
+            );
+            uploadTasks.push(uploadQRTask);
+        }
 
-    // Once all uploads are done, update the database
-    Promise.all(uploadTasks).then(() => {
-        productRef.update(updates).then(() => {
-            Swal.fire('Product updated successfully!', '', 'success');
-        }).catch((error) => {
-            console.error('Error updating product:', error);
-            Swal.fire('Error updating product', '', 'error');
+        // Once all uploads are done, update the database
+        Promise.all(uploadTasks).then(() => {
+            productRef.update(updates).then(() => {
+                Swal.fire('Product updated successfully!', '', 'success');
+            }).catch((error) => {
+                console.error('Error updating product:', error);
+                Swal.fire('Error updating product', '', 'error');
+            });
         });
-    });
-}
+    }
 
 
 
@@ -1871,10 +1871,11 @@ function editProd() {
 
 
 </script>
-    <script src="js/donut.js"></script>
-    <script src="js/pendingOrders.js"></script>
-    <script src="js/acceptedOrders.js"></script>
-    <script src="js/shipOrders.js"></script>
-    <script src="js/completedOrders.js"></script>
-    <script src="js/displayStaff.js"></script>
+<script src="js/donut.js"></script>
+<script src="js/pendingOrders.js"></script>
+<script src="js/acceptedOrders.js"></script>
+<script src="js/shipOrders.js"></script>
+<script src="js/completedOrders.js"></script>
+<script src="js/displayStaff.js"></script>
+
 </html>
