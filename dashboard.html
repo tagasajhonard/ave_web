@@ -270,6 +270,17 @@
                 </div>
 
                 <a href="#">
+                    <div class="flex">
+                        <div class="li_img">
+                            <img src="image/setting.png">
+                        </div>
+                        <div class="li_name setting">
+                            <li>SETTINGS</li>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="#">
                     <div class="flex" id="logoutbtn">
                         <div class="li_img">
                             <img src="image/logout.png">
@@ -1040,7 +1051,41 @@
 
 
 
+function showSemanticVersionInput() {
+  Swal.fire({
+    title: 'Set App Versions',
+    html:
+      `<input id="minVer" class="swal2-input" placeholder="Min Supported Version (e.g. 1.0.0)">
+       <input id="latestVer" class="swal2-input" placeholder="Latest Version (e.g. 1.2.3)">`,
+    confirmButtonText: 'Update',
+    focusConfirm: false,
+    preConfirm: () => {
+      const minVer = document.getElementById('minVer').value.trim();
+      const latestVer = document.getElementById('latestVer').value.trim();
+      const semverRegex = /^\d+\.\d+\.\d+$/;
 
+      if (!semverRegex.test(minVer) || !semverRegex.test(latestVer)) {
+        Swal.showValidationMessage('Use valid format like 1.0.0');
+        return false;
+      }
+
+      return { minVer, latestVer };
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const { minVer, latestVer } = result.value;
+
+      firebase.database().ref('appVersion').set({
+        minSupported: minVer,
+        latest: latestVer
+      }).then(() => {
+        Swal.fire('Success', 'App version updated!', 'success');
+      }).catch((error) => {
+        Swal.fire('Error', 'Failed to update: ' + error.message, 'error');
+      });
+    }
+  });
+}
 
     function fetchAndDisplayUsers() {
         const usersRef = database.ref('Users');

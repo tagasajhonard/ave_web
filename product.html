@@ -219,8 +219,9 @@ function sendProd() {
 
         // Proceed to add the new product
         productsRef.once('value', (snapshot) => {
-            const productCount = snapshot.numChildren();
-            const newProductKey = 'Product' + (productCount + 1);
+            // const productCount = snapshot.numChildren();
+            // const newProductKey = 'Product' + (productCount + 1);
+            const newProductKey = productsRef.push().key;
 
             const storageRef = storage.ref().child('productImages/' + imgFile.name);
             const storageQr = storage.ref().child('qrImages/' + qrIMG.name);
